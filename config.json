@@ -1,0 +1,7 @@
+{
+    "backend_url": "http://172.21.146.162:8080/insert",
+    "city": "Mumbai",
+    "zones": ["Andheri", "Bandra", "Powai", "Dadar", "Colaba"],
+    "sensor_ids": ["S101", "S102", "S103", "S104", "S105"],
+    "interval": 5
+}
