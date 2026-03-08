@@ -6,6 +6,10 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 
 class BaseSensor(ABC):
+    """
+    Abstract base class for all smart city sensors.
+    Common logic for configuration and data transmission.
+    """
     def __init__(self, config):
         self.config = config
         self.backend_url = config.get("backend_url")
@@ -27,6 +31,9 @@ class BaseSensor(ABC):
             print(f"[{self.__class__.__name__}] Error sending data:", e)
 
 class EnvironmentSensor(BaseSensor):
+    """
+    Simulates environmental factors such as temperature, humidity, and air quality.
+    """
     def generate_data(self):
         return {
             "sensorId": random.choice(self.sensor_ids),
@@ -41,6 +48,9 @@ class EnvironmentSensor(BaseSensor):
         }
 
 class TrafficSensor(BaseSensor):
+    """
+    Simulates traffic flow data including vehicle counts and average speeds.
+    """
     def generate_data(self):
         return {
             "sensorId": random.choice(self.sensor_ids),
@@ -53,6 +63,9 @@ class TrafficSensor(BaseSensor):
         }
 
 class WasteSensor(BaseSensor):
+    """
+    Simulates waste management metrics such as bin fill levels.
+    """
     def generate_data(self):
         return {
             "sensorId": random.choice(self.sensor_ids),
