@@ -52,6 +52,18 @@ class TrafficSensor(BaseSensor):
             "type": "traffic"
         }
 
+class WasteSensor(BaseSensor):
+    def generate_data(self):
+        return {
+            "sensorId": random.choice(self.sensor_ids),
+            "city": self.city,
+            "zone": random.choice(self.zones),
+            "fill_level": random.randint(0, 100),
+            "last_collected": datetime.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),
+            "type": "waste"
+        }
+
 def load_config():
     with open("config.json", "r") as f:
         return json.load(f)
@@ -60,7 +72,8 @@ if __name__ == "__main__":
     config = load_config()
     sensors = [
         EnvironmentSensor(config),
-        TrafficSensor(config)
+        TrafficSensor(config),
+        WasteSensor(config)
     ]
 
     print("Smart City Simulator Started...")
