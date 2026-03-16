@@ -1,12 +1,13 @@
 import random
 from datetime import datetime
+from typing import Dict, Any
 from .base import BaseSensor
 
 class EnvironmentSensor(BaseSensor):
     """
     Simulates environmental factors such as temperature, humidity, and air quality.
     """
-    def generate_data(self):
+    def generate_data(self) -> Dict[str, Any]:
         return {
             "sensorId": random.choice(self.sensor_ids),
             "city": self.city,
