@@ -45,7 +45,7 @@ All sensors send data in JSON format with common and type-specific fields.
 .
 #### Common Fields (BaseSensor)
 | Field | Type | Description |
-| :--- | :--- | :--- |
+| :--- | :--- | :--- |.
 | `sensorId` | `string` | Unique identifier for the sensor (e.g., S101) |
 | `city` | `string` | City name (e.g., Mumbai) |
 | `zone` | `string` | Specific area (e.g., Powai) |
