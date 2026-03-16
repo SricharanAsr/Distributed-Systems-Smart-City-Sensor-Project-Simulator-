@@ -2,8 +2,15 @@ import requests
 import random
 import time
 import json
+import logging
 from datetime import datetime
 from abc import ABC, abstractmethod
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('SmartCitySimulator')
 
 class BaseSensor(ABC):
     """
@@ -25,10 +32,10 @@ class BaseSensor(ABC):
         data = self.generate_data()
         try:
             response = requests.post(self.backend_url, json=data)
-            print(f"[{self.__class__.__name__}] Sent Data:", data)
-            print(f"[{self.__class__.__name__}] Server Response:", response.text)
+            logger.info(f"[{self.__class__.__name__}] Sent Data: {data}")
+            logger.info(f"[{self.__class__.__name__}] Server Response: {response.text}")
         except Exception as e:
-            print(f"[{self.__class__.__name__}] Error sending data:", e)
+            logger.error(f"[{self.__class__.__name__}] Error sending data: {e}")
 
 class EnvironmentSensor(BaseSensor):
     """
@@ -89,7 +96,7 @@ if __name__ == "__main__":
         WasteSensor(config)
     ]
 
-    print("Smart City Simulator Started...")
+    logger.info("Smart City Simulator Started...")
     while True:
         for sensor in sensors:
             sensor.send_data()
