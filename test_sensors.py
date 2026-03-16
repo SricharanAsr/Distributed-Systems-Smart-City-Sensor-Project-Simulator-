@@ -1,5 +1,12 @@
 import unittest
-from sensors import EnvironmentSensor, TrafficSensor, WasteSensor, NoiseSensor, EnergySensor
+from sensors import (
+    EnvironmentSensor,
+    TrafficSensor,
+    WasteSensor,
+    NoiseSensor,
+    EnergySensor,
+)
+
 
 class TestSensors(unittest.TestCase):
     def setUp(self):
@@ -8,7 +15,7 @@ class TestSensors(unittest.TestCase):
             "city": "TestCity",
             "zones": ["ZoneA"],
             "sensor_ids": ["S001"],
-            "interval": 1
+            "interval": 1,
         }
 
     def test_environment_sensor_data(self):
@@ -41,6 +48,7 @@ class TestSensors(unittest.TestCase):
         data = sensor.generate_data()
         self.assertEqual(data["type"], "energy")
         self.assertIn("consumption_kw", data)
+
 
 if __name__ == "__main__":
     unittest.main()

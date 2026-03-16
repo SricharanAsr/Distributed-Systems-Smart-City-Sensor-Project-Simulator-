@@ -6,10 +6,10 @@ from .noise import NoiseSensor
 from .energy import EnergySensor
 
 __all__ = [
-    'BaseSensor',
-    'EnvironmentSensor',
-    'TrafficSensor',
-    'WasteSensor',
-    'NoiseSensor',
-    'EnergySensor'
+    "BaseSensor",
+    "EnvironmentSensor",
+    "TrafficSensor",
+    "WasteSensor",
+    "NoiseSensor",
+    "EnergySensor",
 ]

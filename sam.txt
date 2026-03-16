@@ -1,0 +1,39 @@
+import requests
+import random
+import time
+from datetime import datetime
+
+# Backend API endpoint
+URL = "http://172.21.146.162:8080/insert"
+
+# Possible sensor zones
+zones = ["Andheri", "Bandra", "Powai", "Dadar", "Colaba"]
+
+# Possible sensor IDs
+sensor_ids = ["S101", "S102", "S103", "S104", "S105"]
+
+while True:
+
+    sensor_data = {
+        "sensorId": random.choice(sensor_ids),
+        "city": "Mumbai",
+        "zone": random.choice(zones),
+        "temperature": round(random.uniform(25, 40), 2),
+        "humidity": random.randint(40, 80),
+        "aqi": random.randint(50, 300),
+        "co2": random.randint(350, 500),
+        "timestamp": datetime.now().isoformat()
+    }
+
+    try:
+        response = requests.post(URL, json=sensor_data)
+
+        print("Sent Data:", sensor_data)
+        print("Server Response:", response.text)
+        print("S")
+
+    except Exception as e:
+        print("Error sending data:", e)
+
+    # wait before next sensor reading
+    time.sleep(5)
