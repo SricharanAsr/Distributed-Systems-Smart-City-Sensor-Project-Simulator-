@@ -61,21 +61,36 @@ class SimulatorManager:
             EnergySensor(config)
         ]
         self._running = False
+        self.threads: List[threading.Thread] = []
+
+    def _run_sensor(self, sensor: Any) -> None:
+        """Continuously runs a single sensor."""
+        while self._running:
+            sensor.send_data()
+            time.sleep(self.interval)
 
     def start(self) -> None:
-        """Starts the main simulation loop."""
+        """Starts the main simulation loop with multi-threading."""
         self._running = True
         logger.info(f"Smart City Simulator Started with {len(self.sensors)} sensors...")
         
+        for sensor in self.sensors:
+            thread = threading.Thread(target=self._run_sensor, args=(sensor,))
+            thread.daemon = True
+            self.threads.append(thread)
+            thread.start()
+            
+        # Keep the main thread alive
         while self._running:
-            for sensor in self.sensors:
-                sensor.send_data()
-            time.sleep(self.interval)
+            time.sleep(1)
             
     def stop(self) -> None:
-        """Stops the simulation loop."""
+        """Stops the simulation loop and joins threads."""
         self._running = False
-        logger.info("Smart City Simulator Stopped.")
+        logger.info("Stopping Smart City Simulator...")
+        for thread in self.threads:
+            thread.join(timeout=2)
+        logger.info("Simulator gracefully stopped.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Smart City Sensor Simulator")
@@ -85,4 +100,8 @@ if __name__ == "__main__":
     config = load_config(args.config)
     
     manager = SimulatorManager(config)
-    manager.start()
+    try:
+        manager.start()
+    except KeyboardInterrupt:
+        logger.info("Interrupted by user. Shutting down...")
+        manager.stop()
