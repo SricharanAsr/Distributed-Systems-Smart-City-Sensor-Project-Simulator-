@@ -7,10 +7,12 @@ A distributed system simulator for smart city sensor data. This project simulate
 ```mermaid
 graph TD
     subgraph "Smart City Simulator"
-        Config[config.json] --> Sim[simulator.py]
-        Sim --> ES[Environment Sensor]
-        Sim --> TS[Traffic Sensor]
-        Sim --> WS[Waste Sensor]
+        Config[config.json / .env] --> Sim[SimulatorManager]
+        Sim --> ES[EnvironmentSensor]
+        Sim --> TS[TrafficSensor]
+        Sim --> WS[WasteSensor]
+        Sim --> NS[NoiseSensor]
+        Sim --> EnS[EnergySensor]
     end
 
     subgraph "Backend System"
@@ -26,11 +28,14 @@ graph TD
 ## Features
 
 - **Modular Design**: Class-based sensor implementation allows for easy expansion.
-- **Configurable**: External `config.json` for managing backend URLs, IDs, and intervals.
+- **Configurable**: External `config.json`, `.env` variables, and CLI args.
+- **Robustness**: Pydantic data validation and gracefull multi-threaded orchestrated execution.
 - **Multiple Sensor Types**:
     - **Environment**: Temperature, Humidity, AQI, CO2.
     - **Traffic**: Vehicle count, Average Speed.
     - **Waste**: Fill levels, Collection status.
+    - **Noise**: Acoustic decibel levels.
+    - **Energy**: City power consumption in kW.
 
 ## Technical Specifications
 
@@ -51,6 +56,8 @@ All sensors send data in JSON format with common and type-specific fields.
 - **Environment**: `temperature`, `humidity`, `aqi`, `co2`
 - **Traffic**: `vehicle_count`, `average_speed`
 - **Waste**: `fill_level`, `last_collected`
+- **Noise**: `decibels`
+- **Energy**: `consumption_kw`
 
 ### API Specification
 
@@ -73,11 +80,21 @@ The simulator interacts with a backend REST API.
    ```
 
 2. **Configure**:
-   Update `config.json` with your backend URL and sensor details.
+   Update `config.json` or copy `.env.example` to `.env` and set your backend URL and sensor details.
 
 3. **Run Simulator**:
    ```bash
-   python simulator.py
+   # using python
+   python simulator.py --config config.json
+   
+   # Using make
+   make run
+   ```
+   
+4. **Deploy with Docker**:
+   ```bash
+   make docker-build
+   docker run smart-city-simulator
    ```
 
 ## Repository Statistics

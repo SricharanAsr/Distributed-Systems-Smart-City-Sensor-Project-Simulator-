@@ -36,9 +36,11 @@ python simulator.py
 ```
 
 ### Running Tests
-We use the `unittest` framework:
+We use the `pytest` and `unittest` framework:
 ```bash
-python test_sensors.py
+make test
+# OR
+pytest test_sensors.py
 ```
 
 ### Debugging Tips
@@ -47,7 +49,12 @@ python test_sensors.py
 - Ensure your machine has network access to the target IP address.
 
 ## Project Structure
-- `simulator.py`: Core logic and sensor class definitions.
-- `config.json`: Environment-specific configuration.
+- `simulator.py`: Entry point and `SimulatorManager` orchestration.
+- `sensors/`: Package containing sensor definitions.
+  - `models.py`: Pydantic data schemas.
+  - `base.py`: Abstract `BaseSensor`.
+  - `environment.py`, `traffic.py`, etc.: Specific sensor implementations.
+- `config.json` & `.env`: Environment-specific configurations.
 - `test_sensors.py`: Unit tests.
+- `Makefile` & `Dockerfile`: Infrastructure configurations.
 - `README.md`: High-level overview.
