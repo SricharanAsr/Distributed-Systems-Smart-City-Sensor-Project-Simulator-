@@ -49,7 +49,7 @@ All sensors send data in JSON format with common and type-specific fields.
 | `sensorId` | `string` | Unique identifier for the sensor (e.g., S101) |
 | `city` | `string` | City name (e.g., Mumbai) |
 | `zone` | `string` | Specific area (e.g., Powai) |
-| `timestamp` | `ISO8601` | Time of reading (e.g., 2024-03-08T10:00:00Z) |
+| `timestamp` | `ISO8601` | Time of reading (e.g., 2024-03-08T10:00:00Z) |.
 | `type` | `string` | Sensor type (environment, traffic, waste) |
 
 #### Type-Specific Fields
