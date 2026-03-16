@@ -1,13 +1,12 @@
 import argparse
-import requests
-import random
 import time
 import json
 import logging
 import os
+import threading
 from dotenv import load_dotenv
-from datetime import datetime
-from sensors import EnvironmentSensor, TrafficSensor, WasteSensor, NoiseSensor
+from typing import List, Dict, Any
+from sensors import EnvironmentSensor, TrafficSensor, WasteSensor, NoiseSensor, EnergySensor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -47,22 +46,43 @@ def load_config(config_path="config.json"):
 
     return config_data
 
+class SimulatorManager:
+    """
+    Manages the initialization and continuous data transmission of smart city sensors.
+    """
+    def __init__(self, config: Dict[str, Any]) -> None:
+        self.config = config
+        self.interval = config.get("interval", 5)
+        self.sensors = [
+            EnvironmentSensor(config),
+            TrafficSensor(config),
+            WasteSensor(config),
+            NoiseSensor(config),
+            EnergySensor(config)
+        ]
+        self._running = False
+
+    def start(self) -> None:
+        """Starts the main simulation loop."""
+        self._running = True
+        logger.info(f"Smart City Simulator Started with {len(self.sensors)} sensors...")
+        
+        while self._running:
+            for sensor in self.sensors:
+                sensor.send_data()
+            time.sleep(self.interval)
+            
+    def stop(self) -> None:
+        """Stops the simulation loop."""
+        self._running = False
+        logger.info("Smart City Simulator Stopped.")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Smart City Sensor Simulator")
     parser.add_argument('--config', type=str, default="config.json", help="Path to configuration file")
     args = parser.parse_args()
 
     config = load_config(args.config)
-    sensors = [
-        EnvironmentSensor(config),
-        TrafficSensor(config),
-        WasteSensor(config),
-        NoiseSensor(config)
-    ]
-
-    logger.info("Smart City Simulator Started...")
-    while True:
-        for sensor in sensors:
-            sensor.send_data()
-        
-        time.sleep(config.get("interval", 5))
+    
+    manager = SimulatorManager(config)
+    manager.start()
