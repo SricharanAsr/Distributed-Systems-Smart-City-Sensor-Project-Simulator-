@@ -1,5 +1,5 @@
 import unittest
-from simulator import EnvironmentSensor, TrafficSensor, WasteSensor
+from sensors import EnvironmentSensor, TrafficSensor, WasteSensor
 
 class TestSensors(unittest.TestCase):
     def setUp(self):
