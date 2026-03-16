@@ -1,3 +1,5 @@
+import argparse
+import requests
 import random
 import time
 import json
@@ -88,11 +90,11 @@ class WasteSensor(BaseSensor):
             "type": "waste"
         }
 
-def load_config():
+def load_config(config_path="config.json"):
     # Load defaults from config.json
     config_data = {}
     try:
-        with open("config.json", "r") as f:
+        with open(config_path, "r") as f:
             config_data = json.load(f)
     except FileNotFoundError:
         logger.warning("config.json not found, relying solely on environment variables or defaults.")
@@ -118,7 +120,11 @@ def load_config():
     return config_data
 
 if __name__ == "__main__":
-    config = load_config()
+    parser = argparse.ArgumentParser(description="Smart City Sensor Simulator")
+    parser.add_argument('--config', type=str, default="config.json", help="Path to configuration file")
+    args = parser.parse_args()
+
+    config = load_config(args.config)
     sensors = [
         EnvironmentSensor(config),
         TrafficSensor(config),
