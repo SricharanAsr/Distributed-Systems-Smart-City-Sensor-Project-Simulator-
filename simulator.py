@@ -7,7 +7,7 @@ import logging
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-from sensors import EnvironmentSensor, TrafficSensor, WasteSensor
+from sensors import EnvironmentSensor, TrafficSensor, WasteSensor, NoiseSensor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -56,7 +56,8 @@ if __name__ == "__main__":
     sensors = [
         EnvironmentSensor(config),
         TrafficSensor(config),
-        WasteSensor(config)
+        WasteSensor(config),
+        NoiseSensor(config)
     ]
 
     logger.info("Smart City Simulator Started...")
