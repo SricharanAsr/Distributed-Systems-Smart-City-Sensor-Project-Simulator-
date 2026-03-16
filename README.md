@@ -42,7 +42,7 @@ graph TD
 ### Data Schema
 
 All sensors send data in JSON format with common and type-specific fields.
-
+.
 #### Common Fields (BaseSensor)
 | Field | Type | Description |
 | :--- | :--- | :--- |
