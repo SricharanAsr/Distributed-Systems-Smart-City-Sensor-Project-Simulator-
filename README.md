@@ -4,7 +4,7 @@ A distributed system simulator for smart city sensor data. This project simulate
 
 ## Architecture
 
-```mermaid
+```mermaid.
 graph TD
     subgraph "Smart City Simulator"
         Config[config.json / .env] --> Sim[SimulatorManager]
