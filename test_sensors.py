@@ -1,5 +1,5 @@
 import unittest
-from sensors import EnvironmentSensor, TrafficSensor, WasteSensor
+from sensors import EnvironmentSensor, TrafficSensor, WasteSensor, NoiseSensor
 
 class TestSensors(unittest.TestCase):
     def setUp(self):
@@ -29,6 +29,12 @@ class TestSensors(unittest.TestCase):
         data = sensor.generate_data()
         self.assertEqual(data["type"], "waste")
         self.assertIn("fill_level", data)
+
+    def test_noise_sensor_data(self):
+        sensor = NoiseSensor(self.config)
+        data = sensor.generate_data()
+        self.assertEqual(data["type"], "noise")
+        self.assertIn("decibels", data)
 
 if __name__ == "__main__":
     unittest.main()
