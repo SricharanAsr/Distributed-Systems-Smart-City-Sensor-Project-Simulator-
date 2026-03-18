@@ -16,6 +16,16 @@ from sensors import (
     WaterQualitySensor,
     AirQualitySensor,
 )
+from sensors.constants import (
+    DEFAULT_BACKEND_URL,
+    DEFAULT_CITY,
+    DEFAULT_ZONES,
+    DEFAULT_SENSOR_IDS,
+    DEFAULT_INTERVAL,
+    JITTER_PERCENTAGE,
+    MIN_SLEEP_TIME,
+    GRACEFUL_SHUTDOWN_TIMEOUT,
+)
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -106,11 +116,11 @@ def load_config(config_path="config.json"):
                 config_data[config_key] = val
 
     # Apply fallbacks
-    config_data.setdefault("backend_url", "http://localhost:8080/insert")
-    config_data.setdefault("city", "UnknownCity")
-    config_data.setdefault("zones", ["ZoneA"])
-    config_data.setdefault("sensor_ids", ["S1"])
-    config_data.setdefault("interval", 5)
+    config_data.setdefault("backend_url", DEFAULT_BACKEND_URL)
+    config_data.setdefault("city", DEFAULT_CITY)
+    config_data.setdefault("zones", DEFAULT_ZONES)
+    config_data.setdefault("sensor_ids", DEFAULT_SENSOR_IDS)
+    config_data.setdefault("interval", DEFAULT_INTERVAL)
 
     # Validation
     validate_config(config_data)
@@ -167,9 +177,9 @@ class SimulatorManager:
 
         while not self.cancel_token.is_cancelled():
             sensor.send_data()
-            # Add ±20% jitter to the interval
-            jitter = random.uniform(-0.2 * self.interval, 0.2 * self.interval)
-            sleep_time = max(1, self.interval + jitter)
+            # Add jitter
+            jitter = random.uniform(-JITTER_PERCENTAGE * self.interval, JITTER_PERCENTAGE * self.interval)
+            sleep_time = max(MIN_SLEEP_TIME, self.interval + jitter)
             
             for _ in range(int(sleep_time)):
                 if self.cancel_token.is_cancelled():
@@ -200,7 +210,7 @@ class SimulatorManager:
         logger.info("Stopping Smart City Simulator...")
         self.cancel_token.cancel()
         for thread in self.threads:
-            thread.join(timeout=2)
+            thread.join(timeout=GRACEFUL_SHUTDOWN_TIMEOUT)
         logger.info("Simulator gracefully stopped.")
 
 
