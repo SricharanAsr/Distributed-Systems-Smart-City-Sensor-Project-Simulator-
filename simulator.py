@@ -21,6 +21,41 @@ logging.basicConfig(
 )
 logger = logging.getLogger("SmartCitySimulator")
 
+
+class JsonFormatter(logging.Formatter):
+    """
+    Custom formatter to output logs in JSON format.
+    """
+
+    def format(self, record):
+        log_record = {
+            "timestamp": self.formatTime(record, self.datefmt),
+            "name": record.name,
+            "level": record.levelname,
+            "message": record.getMessage(),
+        }
+        if record.exc_info:
+            log_record["exception"] = self.formatException(record.exc_info)
+        return json.dumps(log_record)
+
+
+def setup_logging(json_format=False):
+    handler = logging.StreamHandler()
+    if json_format:
+        handler.setFormatter(JsonFormatter())
+    else:
+        handler.setFormatter(
+            logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+        )
+
+    logger.handlers = []
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    # Prevent propagation to the root logger which has the default config
+    logger.propagate = False
+
 # Load environment variables from .env file if it exists
 load_dotenv()
 
@@ -158,6 +193,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = load_config(args.config)
+
+    # Use JSON logging if configured or via env var
+    use_json = config.get("json_logging", os.getenv("JSON_LOGGING", "false").lower() == "true")
+    setup_logging(json_format=use_json)
 
     manager = SimulatorManager(config)
     try:
