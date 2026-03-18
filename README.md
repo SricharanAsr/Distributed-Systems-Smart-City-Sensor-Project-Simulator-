@@ -25,9 +25,31 @@ graph TD
     ES -- HTTP POST --> API
     TS -- HTTP POST --> API
     WS -- HTTP POST --> API
-    WQS -- HTTP POST --> API
     AQS -- HTTP POST --> API
 ```
+
+## Project Explanation
+
+The **Smart City Sensor Project Simulator** is a robust, distributed-system-inspired tool designed to simulate real-world urban data generation. It bridges the gap between theoretical city planning and practical data engineering by providing a modular framework for generating high-fidelity sensor telemetry (Environment, Traffic, Waste, Noise, Energy, Water, and Air Quality) and transmitting it to a centralized backend for real-time analytics.
+
+## Tech Stack
+
+- **Core**: Python 3.10+
+- **Data Modeling & Validation**: [Pydantic v2](https://docs.pydantic.dev/) for strict type checking and data integrity.
+- **Communication**: [Requests](https://requests.readthedocs.io/) for high-concurrency HTTP data transmission.
+- **Configuration**: Support for `.env`, `config.json`, and **YAML** (`PyYAML`).
+- **Concurrency**: Multi-threaded orchestration via Python's `threading` module.
+- **Testing**: [pytest](https://docs.pytest.org/) and `unittest` for component-level verification.
+- **Code Quality**: [Black](https://black.readthedocs.io/) for standardized formatting.
+- **DevOps**: [Docker](https://www.docker.com/), [Makefile](https://www.gnu.org/software/make/manual/make.html), and **GitHub Actions CI/CD**.
+
+## Working Principles
+
+1.  **Threaded Orchestration**: The `SimulatorManager` initializes a dedicated thread for each sensor type, ensuring independent operation and preventing blocking.
+2.  **Model-Driven Generation**: Each sensor uses a dedicated Pydantic model to generate randomized yet valid telemetry data (e.g., pH stays within 0-14, humidity 0-100%).
+3.  **Desynchronization (Interval Jitter)**: To prevent synchronized "thundering herd" API calls, a randomization algorithm adds jitter to the simulation intervals, creating a more realistic network load.
+4.  **Graceful Orchestration**: A `CancellationToken` mechanism allows for clean, non-blocking shutdowns, ensuring no data loss during simulation termination.
+5.  **Environment Parity**: Configuration is loaded from multiple sources (env, file, CLI) with a clear precedence order, suitable for local development or containerized deployment.
 
 ## Features
 
