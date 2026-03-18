@@ -5,6 +5,8 @@ from sensors import (
     WasteSensor,
     NoiseSensor,
     EnergySensor,
+    WaterQualitySensor,
+    AirQualitySensor,
 )
 
 
@@ -48,6 +50,23 @@ class TestSensors(unittest.TestCase):
         data = sensor.generate_data()
         self.assertEqual(data["type"], "energy")
         self.assertIn("consumption_kw", data)
+
+    def test_water_quality_sensor_data(self):
+        sensor = WaterQualitySensor(self.config)
+        data = sensor.generate_data()
+        self.assertEqual(data["type"], "water_quality")
+        self.assertIn("ph", data)
+        self.assertIn("turbidity", data)
+        self.assertIn("dissolved_oxygen", data)
+
+    def test_air_quality_sensor_data(self):
+        sensor = AirQualitySensor(self.config)
+        data = sensor.generate_data()
+        self.assertEqual(data["type"], "air_quality")
+        self.assertIn("pm25", data)
+        self.assertIn("pm10", data)
+        self.assertIn("no2", data)
+        self.assertIn("o3", data)
 
 
 if __name__ == "__main__":
