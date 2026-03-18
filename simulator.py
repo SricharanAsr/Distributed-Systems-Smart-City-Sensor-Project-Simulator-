@@ -13,6 +13,7 @@ from sensors import (
     NoiseSensor,
     EnergySensor,
     WaterQualitySensor,
+    AirQualitySensor,
 )
 
 logging.basicConfig(
@@ -110,6 +111,7 @@ class SimulatorManager:
             NoiseSensor(config),
             EnergySensor(config),
             WaterQualitySensor(config),
+            AirQualitySensor(config),
         ]
         self._running = False
         self.cancel_token = CancellationToken()

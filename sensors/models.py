@@ -44,3 +44,11 @@ class WaterQualityData(BaseSensorData):
     ph: float = Field(..., ge=0.0, le=14.0)
     turbidity: float = Field(..., ge=0.0, le=100.0)
     dissolved_oxygen: float = Field(..., ge=0.0, le=20.0)
+
+
+class AirQualityData(BaseSensorData):
+    type: Literal["air_quality"] = "air_quality"
+    pm25: float = Field(..., ge=0.0, le=500.0)
+    pm10: float = Field(..., ge=0.0, le=500.0)
+    no2: float = Field(..., ge=0.0, le=500.0)
+    o3: float = Field(..., ge=0.0, le=500.0)
