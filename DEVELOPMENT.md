@@ -53,8 +53,9 @@ pytest test_sensors.py
 - `sensors/`: Package containing sensor definitions.
   - `models.py`: Pydantic data schemas.
   - `base.py`: Abstract `BaseSensor`.
-  - `environment.py`, `traffic.py`, etc.: Specific sensor implementations.
-- `config.json` & `.env`: Environment-specific configurations.
+  - `constants.py`: Centralized simulation constants and type names.
+  - `environment.py`, `traffic.py`, `water_quality.py`, etc.: Specific sensor implementations.
+- `config.json`, `config.yaml` & `.env`: Environment-specific configurations.
 - `test_sensors.py`: Unit tests.
 - `Makefile` & `Dockerfile`: Infrastructure configurations.
 - `README.md`: High-level overview.
