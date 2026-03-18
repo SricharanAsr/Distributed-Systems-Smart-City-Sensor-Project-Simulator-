@@ -43,28 +43,56 @@ def load_config(config_path="config.json"):
             config_data = json.load(f)
     except FileNotFoundError:
         logger.warning(
-            "config.json not found, relying solely on environment variables or defaults."
+            f"{config_path} not found, relying on environment variables or defaults."
         )
+    except json.JSONDecodeError as e:
+        logger.error(f"Error parsing {config_path}: {e}")
 
     # Override with environment variables
-    if os.getenv("BACKEND_URL"):
-        config_data["backend_url"] = os.getenv("BACKEND_URL")
-    if os.getenv("CITY"):
-        config_data["city"] = os.getenv("CITY")
-    if os.getenv("SIMULATION_INTERVAL"):
-        try:
-            config_data["interval"] = int(os.getenv("SIMULATION_INTERVAL"))
-        except ValueError:
-            logger.error("SIMULATION_INTERVAL must be an integer.")
+    env_mappings = {
+        "BACKEND_URL": "backend_url",
+        "CITY": "city",
+        "SIMULATION_INTERVAL": "interval",
+    }
+    for env_key, config_key in env_mappings.items():
+        val = os.getenv(env_key)
+        if val:
+            if config_key == "interval":
+                try:
+                    config_data[config_key] = int(val)
+                except ValueError:
+                    logger.error(f"{env_key} must be an integer.")
+            else:
+                config_data[config_key] = val
 
-    # Apply fallbacks if not set
+    # Apply fallbacks
     config_data.setdefault("backend_url", "http://localhost:8080/insert")
     config_data.setdefault("city", "UnknownCity")
     config_data.setdefault("zones", ["ZoneA"])
     config_data.setdefault("sensor_ids", ["S1"])
     config_data.setdefault("interval", 5)
 
+    # Validation
+    validate_config(config_data)
+
     return config_data
+
+
+def validate_config(config: Dict[str, Any]) -> None:
+    """Validates the configuration dictionary."""
+    required_keys = ["backend_url", "city", "zones", "sensor_ids", "interval"]
+    for key in required_keys:
+        if key not in config:
+            raise ValueError(f"Missing required configuration key: {key}")
+
+    if not isinstance(config["interval"], int) or config["interval"] <= 0:
+        raise ValueError("Simulation interval must be a positive integer.")
+
+    if not config["zones"] or not isinstance(config["zones"], list):
+        raise ValueError("Zones must be a non-empty list.")
+
+    if not config["sensor_ids"] or not isinstance(config["sensor_ids"], list):
+        raise ValueError("Sensor IDs must be a non-empty list.")
 
 
 class SimulatorManager:
