@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import threading
+import yaml
 from dotenv import load_dotenv
 from typing import List, Dict, Any
 from sensors import (
@@ -72,16 +73,19 @@ class CancellationToken:
 
 
 def load_config(config_path="config.json"):
-    # Load defaults from config.json
+    # Load defaults from config file
     config_data = {}
     try:
         with open(config_path, "r") as f:
-            config_data = json.load(f)
+            if config_path.endswith((".yaml", ".yml")):
+                config_data = yaml.safe_load(f)
+            else:
+                config_data = json.load(f)
     except FileNotFoundError:
         logger.warning(
             f"{config_path} not found, relying on environment variables or defaults."
         )
-    except json.JSONDecodeError as e:
+    except (json.JSONDecodeError, yaml.YAMLError) as e:
         logger.error(f"Error parsing {config_path}: {e}")
 
     # Override with environment variables
