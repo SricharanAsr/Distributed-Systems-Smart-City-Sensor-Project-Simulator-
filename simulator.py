@@ -24,6 +24,17 @@ logger = logging.getLogger("SmartCitySimulator")
 load_dotenv()
 
 
+class CancellationToken:
+    def __init__(self):
+        self._is_cancelled = False
+
+    def cancel(self):
+        self._is_cancelled = True
+
+    def is_cancelled(self):
+        return self._is_cancelled
+
+
 def load_config(config_path="config.json"):
     # Load defaults from config.json
     config_data = {}
@@ -73,13 +84,17 @@ class SimulatorManager:
             WaterQualitySensor(config),
         ]
         self._running = False
+        self.cancel_token = CancellationToken()
         self.threads: List[threading.Thread] = []
 
     def _run_sensor(self, sensor: Any) -> None:
         """Continuously runs a single sensor."""
-        while self._running:
+        while not self.cancel_token.is_cancelled():
             sensor.send_data()
-            time.sleep(self.interval)
+            for _ in range(self.interval):
+                if self.cancel_token.is_cancelled():
+                    break
+                time.sleep(1)
 
     def start(self) -> None:
         """Starts the main simulation loop with multi-threading."""
@@ -98,8 +113,8 @@ class SimulatorManager:
 
     def stop(self) -> None:
         """Stops the simulation loop and joins threads."""
-        self._running = False
         logger.info("Stopping Smart City Simulator...")
+        self.cancel_token.cancel()
         for thread in self.threads:
             thread.join(timeout=2)
         logger.info("Simulator gracefully stopped.")
