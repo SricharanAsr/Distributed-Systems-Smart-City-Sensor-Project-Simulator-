@@ -185,7 +185,7 @@ class SimulatorManager:
         logger.info("Simulator gracefully stopped.")
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Smart City Sensor Simulator")
     parser.add_argument(
         "--config", type=str, default="config.json", help="Path to configuration file"
@@ -202,11 +202,20 @@ if __name__ == "__main__":
     setup_logging(json_format=use_json)
 
     manager = SimulatorManager(config)
+
+    if args.health:
+        run_healthcheck(manager)
+        return
+
     try:
         manager.start()
     except KeyboardInterrupt:
         logger.info("Interrupted by user. Shutting down...")
         manager.stop()
+
+
+if __name__ == "__main__":
+    main()
 
 
 def run_healthcheck(manager: SimulatorManager) -> None:
