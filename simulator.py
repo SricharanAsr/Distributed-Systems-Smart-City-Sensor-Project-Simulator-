@@ -157,13 +157,28 @@ class SimulatorManager:
         self.threads: List[threading.Thread] = []
 
     def _run_sensor(self, sensor: Any) -> None:
-        """Continuously runs a single sensor."""
+        """Continuously runs a single sensor with randomized jitter."""
+        # Initial random delay to desynchronize sensors
+        initial_delay = random.uniform(0, self.interval)
+        for _ in range(int(initial_delay)):
+            if self.cancel_token.is_cancelled():
+                return
+            time.sleep(1)
+
         while not self.cancel_token.is_cancelled():
             sensor.send_data()
-            for _ in range(self.interval):
+            # Add ±20% jitter to the interval
+            jitter = random.uniform(-0.2 * self.interval, 0.2 * self.interval)
+            sleep_time = max(1, self.interval + jitter)
+            
+            for _ in range(int(sleep_time)):
                 if self.cancel_token.is_cancelled():
                     break
                 time.sleep(1)
+            # Sleep the fractional part
+            remaining = sleep_time - int(sleep_time)
+            if remaining > 0 and not self.cancel_token.is_cancelled():
+                time.sleep(remaining)
 
     def start(self) -> None:
         """Starts the main simulation loop with multi-threading."""
