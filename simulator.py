@@ -190,6 +190,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config", type=str, default="config.json", help="Path to configuration file"
     )
+    parser.add_argument(
+        "--health", action="store_true", help="Run a health check and exit"
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -204,3 +207,36 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logger.info("Interrupted by user. Shutting down...")
         manager.stop()
+
+
+def run_healthcheck(manager: SimulatorManager) -> None:
+    """Performs a health check on the simulator components."""
+    logger.info("Starting Simulator Health Check...")
+    errors = []
+
+    # Check backend connectivity (optional/soft check)
+    try:
+        import requests
+        resp = requests.get(manager.config["backend_url"].replace("/insert", ""), timeout=2)
+        logger.info(f"Backend connectivity check (GET): {'Success' if resp.status_code < 500 else 'Failed'}")
+    except Exception as e:
+        logger.warning(f"Backend connectivity check failed (non-critical): {e}")
+
+    # Check if sensors are initialized
+    if not manager.sensors:
+        errors.append("No sensors initialized.")
+    else:
+        logger.info(f"Initialized {len(manager.sensors)} sensors.")
+
+    # Validate interval
+    if manager.interval <= 0:
+        errors.append(f"Invalid interval: {manager.interval}")
+
+    if errors:
+        logger.error("Health Check FAILED:")
+        for err in errors:
+            logger.error(f" - {err}")
+        exit(1)
+    else:
+        logger.info("Health Check PASSED.")
+        exit(0)
