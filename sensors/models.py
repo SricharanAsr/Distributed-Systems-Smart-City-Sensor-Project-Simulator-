@@ -37,3 +37,10 @@ class NoiseData(BaseSensorData):
 class EnergyData(BaseSensorData):
     type: Literal["energy"] = "energy"
     consumption_kw: float = Field(..., ge=0.0)
+
+
+class WaterQualityData(BaseSensorData):
+    type: Literal["water_quality"] = "water_quality"
+    ph: float = Field(..., ge=0.0, le=14.0)
+    turbidity: float = Field(..., ge=0.0, le=100.0)
+    dissolved_oxygen: float = Field(..., ge=0.0, le=20.0)

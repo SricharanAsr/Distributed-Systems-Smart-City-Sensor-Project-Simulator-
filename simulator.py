@@ -12,6 +12,7 @@ from sensors import (
     WasteSensor,
     NoiseSensor,
     EnergySensor,
+    WaterQualitySensor,
 )
 
 logging.basicConfig(
@@ -69,6 +70,7 @@ class SimulatorManager:
             WasteSensor(config),
             NoiseSensor(config),
             EnergySensor(config),
+            WaterQualitySensor(config),
         ]
         self._running = False
         self.threads: List[threading.Thread] = []
