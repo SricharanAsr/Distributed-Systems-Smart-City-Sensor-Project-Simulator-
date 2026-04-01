@@ -10,3 +10,23 @@ env.bak/
 venv.bak/
 .vscode/
 .idea/
+
+# Testing caches
+.pytest_cache/
+.coverage
+htmlcov/
+.nox/
+.tox/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Research tool caches
+.ipynb_checkpoints
+.python-version
+
+# OS files
+.DS_Store
+Thumbs.db
