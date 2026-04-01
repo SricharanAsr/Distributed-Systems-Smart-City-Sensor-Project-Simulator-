@@ -100,6 +100,31 @@ The simulator interacts with a backend REST API.
 - **Content-Type**: `application/json`
 - **Payload**: Full sensor JSON object as described above.
 
+**Example Payload (Environment Sensor):**
+```json
+{
+  "sensorId": "S101",
+  "city": "Mumbai",
+  "zone": "Andheri",
+  "timestamp": "2024-03-08T10:00:00Z",
+  "type": "environment",
+  "temperature": 28.5,
+  "humidity": 65.2,
+  "aqi": 120,
+  "co2": 450
+}
+```
+
+**Expected Response (Success):**
+```json
+{
+  "status": "success",
+  "message": "Data received successfully",
+  "data_id": "8f3a5b29-1a40-4c72-9b0d-fa0e8d1a1b42"
+}
+```
+
+
 ## Getting Started
 
 1. **Install Dependencies**:
