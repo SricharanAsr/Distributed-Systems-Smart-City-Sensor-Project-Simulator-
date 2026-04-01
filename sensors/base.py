@@ -18,16 +18,28 @@ class BaseSensor(ABC):
         self.city: str = config.get("city", "")
         self.zones: List[str] = config.get("zones", [])
         self.sensor_ids: List[str] = config.get("sensor_ids", [])
+        self.max_retries = 3
+
 
     @abstractmethod
     def generate_data(self) -> Dict[str, Any]:
         pass
 
     def send_data(self) -> None:
+        import time
         data = self.generate_data()
-        try:
-            response = requests.post(self.backend_url, json=data)
-            logger.info(f"[{self.__class__.__name__}] Sent Data: {data}")
-            logger.info(f"[{self.__class__.__name__}] Server Response: {response.text}")
-        except Exception as e:
-            logger.error(f"[{self.__class__.__name__}] Error sending data: {e}")
+        
+        for attempt in range(self.max_retries):
+            try:
+                response = requests.post(self.backend_url, json=data, timeout=5)
+                response.raise_for_status()
+                logger.debug(f"[{self.__class__.__name__}] Sent Data: {data}")
+                break  # Success
+            except requests.exceptions.RequestException as e:
+                logger.warning(
+                    f"[{self.__class__.__name__}] Attempt {attempt + 1}/{self.max_retries} failed: {e}"
+                )
+                if attempt < self.max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                else:
+                    logger.error(f"[{self.__class__.__name__}] Ultimate failure sending data: {e}")
