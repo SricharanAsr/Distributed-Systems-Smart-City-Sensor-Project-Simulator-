@@ -46,22 +46,22 @@ class CancellationToken:
         return self._is_cancelled
 
 
-def load_config(config_path="config.json"):
+def load_config(config_path: str = "config.json") -> Dict[str, Any]:
     # Load defaults from config file
     config_data = {}
-    try:
-        with open(config_path, "r") as f:
-            if config_path.endswith((".yaml", ".yml")):
-                config_data = yaml.safe_load(f)
-            else:
-                config_data = json.load(f)
-    except FileNotFoundError:
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r") as f:
+                if config_path.endswith((".yaml", ".yml")):
+                    config_data = yaml.safe_load(f) or {}
+                else:
+                    config_data = json.load(f)
+        except (json.JSONDecodeError, yaml.YAMLError) as e:
+            logger.error(f"Error parsing {config_path}: {e}")
+    else:
         logger.warning(
-            f"{config_path} not found, relying on environment variables or defaults."
+            f"Config file '{config_path}' not found, relying on environment variables or defaults."
         )
-    except (json.JSONDecodeError, yaml.YAMLError) as e:
-        logger.error(f"Error parsing {config_path}: {e}")
-
     # Override with environment variables
     env_mappings = {
         "BACKEND_URL": "backend_url",
