@@ -36,14 +36,15 @@ load_dotenv()
 
 
 class CancellationToken:
-    def __init__(self):
-        self._is_cancelled = False
+    def __init__(self) -> None:
+        self._is_cancelled: bool = False
 
-    def cancel(self):
+    def cancel(self) -> None:
         self._is_cancelled = True
 
-    def is_cancelled(self):
+    def is_cancelled(self) -> bool:
         return self._is_cancelled
+
 
 
 def load_config(config_path: str = "config.json") -> Dict[str, Any]:
