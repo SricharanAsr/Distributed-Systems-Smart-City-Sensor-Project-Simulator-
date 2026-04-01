@@ -20,10 +20,16 @@ class BaseSensor(ABC):
         self.sensor_ids: List[str] = config.get("sensor_ids", [])
         self.dry_run: bool = config.get("dry_run", False)
         self.max_retries = 3
-
-
+        
+        # Optimize HTTP connections
+        self.session = requests.Session()
+        
+    def __del__(self) -> None:
+        if hasattr(self, 'session'):
+            self.session.close()
 
     @abstractmethod
+
     def generate_data(self) -> Dict[str, Any]:
         pass
 
@@ -38,8 +44,9 @@ class BaseSensor(ABC):
         for attempt in range(self.max_retries):
 
             try:
-                response = requests.post(self.backend_url, json=data, timeout=5)
+                response = self.session.post(self.backend_url, json=data, timeout=5)
                 response.raise_for_status()
+
                 logger.debug(f"[{self.__class__.__name__}] Sent Data: {data}")
                 break  # Success
             except requests.exceptions.RequestException as e:
