@@ -16,7 +16,9 @@ from sensors import (
     WaterQualitySensor,
     AirQualitySensor,
     ParkingSensor,
+    StreetLightSensor,
 )
+
 
 from utils.logging_utils import setup_logging
 from sensors.constants import (
@@ -129,7 +131,9 @@ class SimulatorManager:
             WaterQualitySensor(config),
             AirQualitySensor(config),
             ParkingSensor(config),
+            StreetLightSensor(config),
         ]
+
 
         self._running = False
         self.cancel_token = CancellationToken()

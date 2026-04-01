@@ -1,0 +1,30 @@
+import random
+from datetime import datetime
+from typing import Dict, Any
+from .base import BaseSensor
+from .models import StreetLightData
+
+class StreetLightSensor(BaseSensor):
+    """
+    Simulates streetlight status and energy usage for a smart city environment.
+    """
+
+    def generate_data(self) -> Dict[str, Any]:
+        status_options = ["On", "Off", "Dimmed"]
+        status = random.choice(status_options)
+        
+        consumption = 0.0
+        if status == "On":
+            consumption = random.uniform(0.1, 0.5)
+        elif status == "Dimmed":
+            consumption = random.uniform(0.01, 0.1)
+            
+        data = StreetLightData(
+            sensorId=random.choice(self.sensor_ids),
+            city=self.city,
+            zone=random.choice(self.zones),
+            status=status, # type: ignore
+            energy_usage_kwh=round(consumption, 4),
+            timestamp=datetime.now().isoformat(),
+        )
+        return data.model_dump()

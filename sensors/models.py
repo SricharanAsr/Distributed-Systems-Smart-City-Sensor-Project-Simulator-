@@ -60,3 +60,10 @@ class ParkingData(BaseSensorData):
     occupied_spots: int = Field(..., ge=0)
     available_spots: int = Field(..., ge=0)
 
+
+class StreetLightData(BaseSensorData):
+    type: Literal["streetlight"] = "streetlight"
+    status: Literal["On", "Off", "Dimmed"]
+    energy_usage_kwh: float = Field(..., ge=0.0)
+
+
