@@ -15,7 +15,9 @@ from sensors import (
     EnergySensor,
     WaterQualitySensor,
     AirQualitySensor,
+    ParkingSensor,
 )
+
 from utils.logging_utils import setup_logging
 from sensors.constants import (
     DEFAULT_BACKEND_URL,
@@ -126,7 +128,9 @@ class SimulatorManager:
             EnergySensor(config),
             WaterQualitySensor(config),
             AirQualitySensor(config),
+            ParkingSensor(config),
         ]
+
         self._running = False
         self.cancel_token = CancellationToken()
         self.threads: List[threading.Thread] = []

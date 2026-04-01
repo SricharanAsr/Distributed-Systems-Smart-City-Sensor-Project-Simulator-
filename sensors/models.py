@@ -52,3 +52,11 @@ class AirQualityData(BaseSensorData):
     pm10: float = Field(..., ge=0.0, le=500.0)
     no2: float = Field(..., ge=0.0, le=500.0)
     o3: float = Field(..., ge=0.0, le=500.0)
+
+
+class ParkingData(BaseSensorData):
+    type: Literal["parking"] = "parking"
+    total_spots: int = Field(..., ge=0)
+    occupied_spots: int = Field(..., ge=0)
+    available_spots: int = Field(..., ge=0)
+

@@ -6,6 +6,8 @@ from .noise import NoiseSensor
 from .energy import EnergySensor
 from .water_quality import WaterQualitySensor
 from .air_quality import AirQualitySensor
+from .parking import ParkingSensor
+
 
 __all__ = [
     "BaseSensor",
@@ -16,4 +18,6 @@ __all__ = [
     "EnergySensor",
     "WaterQualitySensor",
     "AirQualitySensor",
+    "ParkingSensor",
 ]
+
