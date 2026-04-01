@@ -7,17 +7,9 @@ import threading
 import yaml
 from dotenv import load_dotenv
 from typing import List, Dict, Any
-from sensors import (
-    EnvironmentSensor,
-    TrafficSensor,
-    WasteSensor,
-    NoiseSensor,
-    EnergySensor,
-    WaterQualitySensor,
-    AirQualitySensor,
-    ParkingSensor,
-    StreetLightSensor,
-)
+import inspect
+import sensors
+
 
 
 from utils.logging_utils import setup_logging
@@ -122,17 +114,11 @@ class SimulatorManager:
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config
         self.interval = config.get("interval", 5)
-        self.sensors = [
-            EnvironmentSensor(config),
-            TrafficSensor(config),
-            WasteSensor(config),
-            NoiseSensor(config),
-            EnergySensor(config),
-            WaterQualitySensor(config),
-            AirQualitySensor(config),
-            ParkingSensor(config),
-            StreetLightSensor(config),
-        ]
+        self.sensors = []
+        for name, obj in inspect.getmembers(sensors):
+            if inspect.isclass(obj) and issubclass(obj, sensors.BaseSensor) and obj is not sensors.BaseSensor:
+                self.sensors.append(obj(config))
+
 
 
         self._running = False
