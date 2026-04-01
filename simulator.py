@@ -181,9 +181,14 @@ def main():
     parser.add_argument(
         "--health", action="store_true", help="Run a health check and exit"
     )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Run simulation without sending API calls"
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
+    config["dry_run"] = args.dry_run
+
 
     # Use JSON logging if configured or via env var
     use_json = config.get("json_logging", os.getenv("JSON_LOGGING", "false").lower() == "true")
