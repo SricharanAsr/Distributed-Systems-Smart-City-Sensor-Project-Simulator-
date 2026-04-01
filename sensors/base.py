@@ -21,7 +21,12 @@ class BaseSensor(ABC):
         self.dry_run: bool = config.get("dry_run", False)
         self.max_retries = 3
         
+        # Statistics
+        self.total_sent = 0
+        self.total_failed = 0
+        
         # Optimize HTTP connections
+
         self.session = requests.Session()
         
     def __del__(self) -> None:
@@ -48,6 +53,7 @@ class BaseSensor(ABC):
                 response.raise_for_status()
 
                 logger.debug(f"[{self.__class__.__name__}] Sent Data: {data}")
+                self.total_sent += 1
                 break  # Success
             except requests.exceptions.RequestException as e:
                 logger.warning(
@@ -56,4 +62,6 @@ class BaseSensor(ABC):
                 if attempt < self.max_retries - 1:
                     time.sleep(2 ** attempt)  # Exponential backoff
                 else:
+                    self.total_failed += 1
                     logger.error(f"[{self.__class__.__name__}] Ultimate failure sending data: {e}")
+

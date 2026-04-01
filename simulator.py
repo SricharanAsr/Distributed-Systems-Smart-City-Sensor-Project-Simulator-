@@ -124,6 +124,8 @@ class SimulatorManager:
         self._running = False
         self.cancel_token = CancellationToken()
         self.threads: List[threading.Thread] = []
+        self.health_interval = 60  # Log stats every 60 seconds
+
 
     def _run_sensor(self, sensor: Any) -> None:
         """Continuously runs a single sensor with randomized jitter."""
@@ -149,6 +151,32 @@ class SimulatorManager:
             if remaining > 0 and not self.cancel_token.is_cancelled():
                 time.sleep(remaining)
 
+    def _log_health(self) -> None:
+        """Periodically logs health and statistics of the simulation."""
+        for _ in range(self.health_interval):
+            if self.cancel_token.is_cancelled():
+                return
+            time.sleep(1)
+
+        while not self.cancel_token.is_cancelled():
+            total_sent = sum(getattr(s, 'total_sent', 0) for s in self.sensors)
+            total_failed = sum(getattr(s, 'total_failed', 0) for s in self.sensors)
+            total = total_sent + total_failed
+            success_rate = (total_sent / total * 100) if total > 0 else 100.0
+
+            logger.info("--- Simulation Health Report ---")
+            logger.info(f"Sensors Active: {len(self.sensors)}")
+            logger.info(f"Total Packets Sent: {total_sent}")
+            logger.info(f"Total Packets Failed: {total_failed}")
+            logger.info(f"Success Rate: {success_rate:.2f}%")
+            logger.info("--------------------------------")
+
+            for _ in range(self.health_interval):
+                if self.cancel_token.is_cancelled():
+                    break
+                time.sleep(1)
+
+
     def start(self) -> None:
         """Starts the main simulation loop with multi-threading."""
         self._running = True
@@ -160,7 +188,14 @@ class SimulatorManager:
             self.threads.append(thread)
             thread.start()
 
+        # Start health logging thread
+        health_thread = threading.Thread(target=self._log_health)
+        health_thread.daemon = True
+        self.threads.append(health_thread)
+        health_thread.start()
+
         # Keep the main thread alive
+
         while self._running:
             time.sleep(1)
 
