@@ -7,7 +7,12 @@ from .models import EnvironmentData
 
 class EnvironmentSensor(BaseSensor):
     """
-    Simulates environmental factors such as temperature, humidity, and air quality.
+    Simulates environmental factors.
+    Units:
+    - Temperature: Celsius
+    - Humidity: % (0-100)
+    - AQI: Index
+    - CO2: ppm
     """
 
     def generate_data(self) -> Dict[str, Any]:
