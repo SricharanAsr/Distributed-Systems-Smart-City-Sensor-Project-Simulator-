@@ -8,6 +8,7 @@ from .models import AirQualityData
 class AirQualitySensor(BaseSensor):
     """
     Simulates an air quality sensor measuring PM2.5, PM10, NO2, and O3.
+    Uses a programmatic correlation model (PM10 = PM2.5 * 1.2-1.8) for realistic data generation.
     """
 
     def generate_data(self) -> Dict[str, Any]:
