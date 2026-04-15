@@ -15,7 +15,11 @@ class JsonFormatter(logging.Formatter):
         }
         if record.exc_info:
             log_record["exception"] = self.formatException(record.exc_info)
-        return json.dumps(log_record)
+        try:
+            return json.dumps(log_record)
+        except TypeError:
+            log_record["message"] = str(log_record.get("message", ""))
+            return json.dumps(log_record)
 
 def setup_logging(name: str = "SmartCitySimulator", json_format: bool = False, level: int = logging.INFO) -> logging.Logger:
     """
