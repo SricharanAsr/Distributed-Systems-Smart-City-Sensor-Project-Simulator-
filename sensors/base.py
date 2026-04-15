@@ -9,7 +9,8 @@ logger = logging.getLogger("SmartCitySimulator")
 class BaseSensor(ABC):
     """
     Abstract base class for all smart city sensors.
-    Common logic for configuration and data transmission.
+    Provides the core threading execution model, HTTP session management,
+    and lifecycle handling for individual sensor implementations.
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
