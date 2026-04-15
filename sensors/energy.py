@@ -15,7 +15,7 @@ class EnergySensor(BaseSensor):
             sensorId=random.choice(self.sensor_ids),
             city=self.city,
             zone=random.choice(self.zones),
-            consumption_kw=round(random.uniform(10.0, 500.0), 2),
+            consumption_kw=round(random.uniform(300.0, 800.0) if (7 <= datetime.now().hour <= 9) or (18 <= datetime.now().hour <= 21) else random.uniform(50.0, 300.0), 2),
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
