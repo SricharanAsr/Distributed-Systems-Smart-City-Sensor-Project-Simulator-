@@ -15,8 +15,8 @@ class TrafficSensor(BaseSensor):
             sensorId=random.choice(self.sensor_ids),
             city=self.city,
             zone=random.choice(self.zones),
-            vehicle_count=random.randint(0, 100),
-            average_speed=round(random.uniform(10, 60), 2),
+            vehicle_count=max(0, random.randint(0, 100)),
+            average_speed=max(0.0, round(random.uniform(10, 60), 2)),
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
