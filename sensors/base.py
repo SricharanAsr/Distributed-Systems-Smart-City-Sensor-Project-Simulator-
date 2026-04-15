@@ -56,7 +56,7 @@ class BaseSensor(ABC):
                 response = self._execute_request_with_retry(data)
                 response.raise_for_status()
 
-                logger.debug(f"[{self.__class__.__name__}] Sent Data: {data}")
+                logger.debug(f"[{self.__class__.__name__}:{data.get('sensorId', 'UNK')}] Sent Data: {data}")
                 self.total_sent += 1
                 break  # Success
             except requests.exceptions.RequestException as e:
