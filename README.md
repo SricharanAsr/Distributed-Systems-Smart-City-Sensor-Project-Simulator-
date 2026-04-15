@@ -63,8 +63,8 @@ The **Smart City Sensor Project Simulator** is a robust, distributed-system-insp
     - **Environment**: Temperature, Humidity, AQI, CO2.
     - **Traffic**: Vehicle count, Average Speed.
     - **Waste**: Fill levels, Collection status.
-    - **Noise**: Acoustic decibel levels.
-    - **Energy**: City power consumption in kW.
+    - **Noise**: Acoustic decibel levels (Time-of-Day Aware).
+    - **Energy**: City power consumption in kW (Peak-Hour Aware).
     - **Water Quality**: pH, Turbidity, Dissolved Oxygen.
     - **Air Quality**: PM2.5, PM10, NO2, O3.
 
