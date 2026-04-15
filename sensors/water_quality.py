@@ -19,7 +19,7 @@ class WaterQualitySensor(BaseSensor):
             city=self.city,
             zone=zone,
             timestamp=datetime.datetime.now().isoformat(),
-            ph=round(random.uniform(6.5, 8.5), 2),
+            ph=max(0.0, min(14.0, round(random.uniform(6.5, 8.5), 2))),
             turbidity=round(random.uniform(0.0, 5.0), 2),
             dissolved_oxygen=round(random.uniform(5.0, 12.0), 2),
         )
