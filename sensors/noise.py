@@ -15,7 +15,7 @@ class NoiseSensor(BaseSensor):
             sensorId=random.choice(self.sensor_ids),
             city=self.city,
             zone=random.choice(self.zones),
-            decibels=random.randint(40, 120),
+            decibels=random.randint(30, 60) if (22 <= datetime.now().hour or datetime.now().hour <= 6) else random.randint(60, 120),
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
