@@ -11,6 +11,10 @@ from .streetlight import StreetLightSensor
 
 
 
+"""
+This module exports all the sensor classes used in the Smart City Simulator.
+Explicit exports ensure only sensor models are visible to the simulator manager.
+"""
 __all__ = [
     "BaseSensor",
     "EnvironmentSensor",
