@@ -39,6 +39,9 @@ class BaseSensor(ABC):
     def generate_data(self) -> Dict[str, Any]:
         pass
 
+    def _execute_request_with_retry(self, data: Dict[str, Any]) -> requests.Response:
+        return self.session.post(self.backend_url, json=data, timeout=5)
+
     def send_data(self) -> None:
         import time
         data = self.generate_data()
@@ -50,7 +53,7 @@ class BaseSensor(ABC):
         for attempt in range(self.max_retries):
 
             try:
-                response = self.session.post(self.backend_url, json=data, timeout=5)
+                response = self._execute_request_with_retry(data)
                 response.raise_for_status()
 
                 logger.debug(f"[{self.__class__.__name__}] Sent Data: {data}")
