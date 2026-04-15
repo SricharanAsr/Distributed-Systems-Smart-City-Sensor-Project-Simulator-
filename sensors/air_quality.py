@@ -20,7 +20,7 @@ class AirQualitySensor(BaseSensor):
             zone=zone,
             timestamp=datetime.datetime.now().isoformat(),
             pm25=round(random.uniform(0.0, 150.0), 2),
-            pm10=round(random.uniform(0.0, 200.0), 2),
+            pm10=round(random.uniform(0.0, 150.0) * random.uniform(1.2, 1.8), 2),
             no2=round(random.uniform(0.0, 100.0), 2),
             o3=round(random.uniform(0.0, 100.0), 2),
         )
