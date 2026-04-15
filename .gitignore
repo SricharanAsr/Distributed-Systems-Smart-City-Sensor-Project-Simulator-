@@ -30,3 +30,8 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Database files
+*.sqlite3
+*.db
+.coverage.*
