@@ -49,3 +49,8 @@ graph TD
 
 - A `CancellationToken` object provides safe inter-thread communication.
 - Instead of forceful kills (`sys.exit()`), threads monitor the token and handle exit cleanup operations, guaranteeing that no incomplete API requests are dropped.
+
+## Advanced Sensor Simulation Models
+
+- **Time-of-day Awareness**: Acoustic and Energy sensors model diurnal patterns.
+- **Data Correlation**: AirQuality sensors dynamically correlate PM2.5 with PM10 values for statistical realism.
