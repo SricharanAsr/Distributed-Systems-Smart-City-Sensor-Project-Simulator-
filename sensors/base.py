@@ -23,8 +23,8 @@ class BaseSensor(ABC):
         self.max_retries = 3
         
         # Statistics
-        self.total_sent = 0
-        self.total_failed = 0
+        self.total_sent: int = 0
+        self.total_failed: int = 0
         
         # Optimize HTTP connections
 
