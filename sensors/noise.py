@@ -8,6 +8,9 @@ from .models import NoiseData
 class NoiseSensor(BaseSensor):
     """
     Simulates acoustic noise levels in decibels (dB) for monitoring city noise pollution.
+    Features Time-of-Day awareness:
+    - Day (7-21): 60-120 dB
+    - Night (22-6): 30-60 dB
     """
 
     def generate_data(self) -> Dict[str, Any]:
