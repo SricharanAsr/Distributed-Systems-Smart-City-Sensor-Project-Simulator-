@@ -3,12 +3,13 @@ import time
 import json
 import logging
 import os
-import threading
 import yaml
 from dotenv import load_dotenv
 from typing import List, Dict, Any
 import inspect
 import sensors
+from concurrent.futures import ThreadPoolExecutor
+
 
 
 
@@ -123,8 +124,9 @@ class SimulatorManager:
 
         self._running = False
         self.cancel_token = CancellationToken()
-        self.threads: List[threading.Thread] = []
+        self.executor = ThreadPoolExecutor(max_workers=len(self.sensors) + 1)
         self.health_interval = 60  # Log stats every 60 seconds
+
 
 
     def _run_sensor(self, sensor: Any) -> None:
@@ -142,6 +144,7 @@ class SimulatorManager:
             jitter = random.uniform(-JITTER_PERCENTAGE * self.interval, JITTER_PERCENTAGE * self.interval)
             sleep_time = max(MIN_SLEEP_TIME, self.interval + jitter)
             
+            # Improved fast-exit evaluation
             for _ in range(int(sleep_time)):
                 if self.cancel_token.is_cancelled():
                     break
@@ -178,34 +181,32 @@ class SimulatorManager:
 
 
     def start(self) -> None:
-        """Starts the main simulation loop with multi-threading."""
+        """Starts the main simulation loop with ThreadPoolExecutor."""
         self._running = True
         logger.info(f"Smart City Simulator Started with {len(self.sensors)} sensors...")
 
         for sensor in self.sensors:
-            thread = threading.Thread(target=self._run_sensor, args=(sensor,))
-            thread.daemon = True
-            self.threads.append(thread)
-            thread.start()
+            self.executor.submit(self._run_sensor, sensor)
 
         # Start health logging thread
-        health_thread = threading.Thread(target=self._log_health)
-        health_thread.daemon = True
-        self.threads.append(health_thread)
-        health_thread.start()
+        self.executor.submit(self._log_health)
 
         # Keep the main thread alive
-
         while self._running:
-            time.sleep(1)
+            try:
+                time.sleep(1)
+            except KeyboardInterrupt:
+                break
+
 
     def stop(self) -> None:
-        """Stops the simulation loop and joins threads."""
+        """Stops the simulation loop and shuts down the executor."""
         logger.info("Stopping Smart City Simulator...")
         self.cancel_token.cancel()
-        for thread in self.threads:
-            thread.join(timeout=GRACEFUL_SHUTDOWN_TIMEOUT)
+        self._running = False
+        self.executor.shutdown(wait=True, cancel_futures=True)
         logger.info("Simulator gracefully stopped.")
+
 
 
 def main():
