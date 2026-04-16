@@ -46,3 +46,5 @@ def setup_logging(name: str = "SmartCitySimulator", json_format: bool = False, l
     return logger
 
 # Optimized imports
+
+# Simulation summary hook
