@@ -10,8 +10,11 @@ class StreetLightSensor(BaseSensor):
     """
 
     def generate_data(self) -> Dict[str, Any]:
-        status_options = ["On", "Off", "Dimmed"]
-        status = random.choice(status_options)
+        hour = datetime.now().hour
+        if 8 <= hour <= 18:
+            status = 'Off'
+        else:
+            status = random.choice(['On', 'Dimmed'])
         
         consumption = 0.0
         if status == "On":
