@@ -22,3 +22,5 @@ class NoiseSensor(BaseSensor):
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
+
+# Noise threshold constraints
