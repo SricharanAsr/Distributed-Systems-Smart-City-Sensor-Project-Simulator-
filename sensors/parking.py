@@ -23,3 +23,5 @@ class ParkingSensor(BaseSensor):
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
+
+# Debug trace support
