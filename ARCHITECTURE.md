@@ -54,3 +54,5 @@ graph TD
 
 - **Time-of-day Awareness**: Acoustic and Energy sensors model diurnal patterns.
 - **Data Correlation**: AirQuality sensors dynamically correlate PM2.5 with PM10 values for statistical realism.
+
+<!-- Updated block -->
