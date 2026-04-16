@@ -13,6 +13,7 @@ class WasteSensor(BaseSensor):
 
     """
     Simulates waste management metrics such as bin fill levels.
+    Algorithmic stateful tracking maintains current fill conditions globally.
     """
 
     def generate_data(self) -> Dict[str, Any]:
