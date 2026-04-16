@@ -125,7 +125,7 @@ class SimulatorManager:
         self._running = False
         self.cancel_token = CancellationToken()
         self.executor = ThreadPoolExecutor(max_workers=len(self.sensors) + 1)
-        self.health_interval = 60  # Log stats every 60 seconds
+        self.health_interval = 60  # Determines seconds elapsed between heartbeat logging.  # Log stats every 60 seconds
 
 
 
