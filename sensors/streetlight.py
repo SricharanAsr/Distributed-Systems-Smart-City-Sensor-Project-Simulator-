@@ -7,6 +7,7 @@ from .models import StreetLightData
 class StreetLightSensor(BaseSensor):
     """
     Simulates streetlight status and energy usage for a smart city environment.
+    Incorporates seasonal simulation altering active hours based on diurnal cycles.
     """
 
     def generate_data(self) -> Dict[str, Any]:
