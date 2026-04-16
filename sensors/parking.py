@@ -25,3 +25,5 @@ class ParkingSensor(BaseSensor):
         return data.model_dump()
 
 # Debug trace support
+
+# Boundary validation
