@@ -12,6 +12,7 @@ class ParkingSensor(BaseSensor):
 
     """
     Simulates parking availability metrics for a smart city environment.
+    Maps derivation mechanism ensuring consistent total locations via MD5 hashing.
     """
 
     def generate_data(self) -> Dict[str, Any]:
