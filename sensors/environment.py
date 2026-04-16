@@ -27,3 +27,5 @@ class EnvironmentSensor(BaseSensor):
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
+
+# Timezone fallback
