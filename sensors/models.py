@@ -63,7 +63,7 @@ class ParkingData(BaseSensorData):
 
 class StreetLightData(BaseSensorData):
     type: Literal["streetlight"] = "streetlight"
-    status: Literal["On", "Off", "Dimmed"]
+    status: Literal["On", "Off", "Dimmed"] = Field(..., description="Current light state")
     energy_usage_kwh: float = Field(..., ge=0.0)
 
 
