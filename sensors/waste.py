@@ -6,6 +6,10 @@ from .models import WasteData
 
 
 class WasteSensor(BaseSensor):
+    def __init__(self, config):
+        super().__init__(config)
+        self._current_fill = random.randint(0, 50)
+
     """
     Simulates waste management metrics such as bin fill levels.
     """
