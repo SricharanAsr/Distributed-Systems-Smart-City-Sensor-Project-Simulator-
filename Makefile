@@ -17,3 +17,6 @@ docker-build:
 	docker build -t smart-city-simulator .
 
 # Extraneous targets
+
+format:
+	black .
