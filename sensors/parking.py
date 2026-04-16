@@ -1,4 +1,5 @@
 import random
+import hashlib
 from datetime import datetime
 from typing import Dict, Any
 from .base import BaseSensor
