@@ -278,3 +278,5 @@ def run_healthcheck(manager: SimulatorManager) -> None:
     else:
         logger.info("Health Check PASSED.")
         exit(0)
+
+# Generator loop optimizations
