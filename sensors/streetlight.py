@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Any
 from .base import BaseSensor
 from .models import StreetLightData
