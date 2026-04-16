@@ -26,3 +26,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - Initial Release
 - Basic Smart City Simulator skeleton
 - Environment, Traffic, Waste, Noise, Energy, Water Quality, and Air Quality sensors
+
+<!-- Expand changelog definitions -->
