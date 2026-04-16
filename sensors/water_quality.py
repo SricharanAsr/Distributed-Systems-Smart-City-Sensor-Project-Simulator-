@@ -24,3 +24,5 @@ class WaterQualitySensor(BaseSensor):
             dissolved_oxygen=round(random.uniform(5.0, 12.0), 2),
         )
         return data.model_dump()
+
+# Water quality enhancements
