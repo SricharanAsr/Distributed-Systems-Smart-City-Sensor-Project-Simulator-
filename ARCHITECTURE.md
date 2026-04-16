@@ -58,3 +58,6 @@ graph TD
 <!-- Updated block -->
 
 <!-- API Gateway specs -->
+
+### Accumulation Architecture
+State machines dictate variables like Waste load to accumulate incrementally rather than generating chaotically.
