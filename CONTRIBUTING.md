@@ -22,3 +22,5 @@ We welcome contributions to the Smart City Sensor Project! To maintain code qual
 2.  Ensure all tests pass by running `python test_sensors.py`.
 3.  Update documentation if you've added new features or changed behaviors.
 4.  Submit a PR with a clear description of the changes.
+
+<!-- New sensor guidelines -->
