@@ -19,3 +19,5 @@ class EnergySensor(BaseSensor):
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
+
+# Energy boundary review
