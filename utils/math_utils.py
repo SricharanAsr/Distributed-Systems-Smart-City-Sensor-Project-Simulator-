@@ -6,3 +6,5 @@ def calculate_jitter(base_interval_sec: float, jitter_percentage: float = 0.1) -
     return base_interval_sec + random.uniform(-variation, variation)
 
 # Math utils reorganization
+
+# Random seed standard
