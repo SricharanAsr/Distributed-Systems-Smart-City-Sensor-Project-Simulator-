@@ -157,3 +157,5 @@ The simulator interacts with a backend REST API.
 - **Last Updated**: 2026-03-18
 - **Language**: Python 3.x
 - **Commits Today**: 13 Professional Industry-Level Commits
+
+<!-- Parameter injection docs -->
