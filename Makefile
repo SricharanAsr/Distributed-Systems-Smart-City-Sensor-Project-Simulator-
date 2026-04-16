@@ -11,6 +11,7 @@ install:
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -r {} +
+	rm -rf .pytest_cache .coverage htmlcov
 
 docker-build:
 	docker build -t smart-city-simulator .
