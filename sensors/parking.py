@@ -12,7 +12,7 @@ class ParkingSensor(BaseSensor):
 
     def generate_data(self) -> Dict[str, Any]:
         total_spots = random.randint(50, 500)
-        occupied_spots = random.randint(0, total_spots)
+        occupied_spots = max(0, min(total_spots, random.randint(0, total_spots)))
         
         data = ParkingData(
             sensorId=random.choice(self.sensor_ids),
