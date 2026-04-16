@@ -20,3 +20,5 @@ class TrafficSensor(BaseSensor):
             timestamp=datetime.now().isoformat(),
         )
         return data.model_dump()
+
+# Traffic payload adjustments
