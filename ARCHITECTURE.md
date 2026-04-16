@@ -56,3 +56,5 @@ graph TD
 - **Data Correlation**: AirQuality sensors dynamically correlate PM2.5 with PM10 values for statistical realism.
 
 <!-- Updated block -->
+
+<!-- API Gateway specs -->
