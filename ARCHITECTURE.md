@@ -61,3 +61,6 @@ graph TD
 
 ### Accumulation Architecture
 State machines dictate variables like Waste load to accumulate incrementally rather than generating chaotically.
+
+## Extensibility Tools
+The `tools` and `utils` directory form a crucial modular subsystem aiding decoupled verification pipelines.
