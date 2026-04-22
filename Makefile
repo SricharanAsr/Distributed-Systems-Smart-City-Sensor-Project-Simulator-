@@ -30,3 +30,12 @@ clean:
 
 docker-build:
 	docker build -t smart-city-simulator .
+
+clean-logs:
+	rm -rf *.log simulator.log*
+
+clean-cache:
+	rm -rf data_cache/*.json
+
+clean-all: clean clean-logs clean-cache
+	@echo "All build artifacts, logs, and caches cleared."
