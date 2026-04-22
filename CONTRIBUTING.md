@@ -48,3 +48,6 @@ We welcome contributions! To maintain a high standard of quality, please follow 
 1.  Create a feature branch from `master`.
 2.  Pass all linting and tests (`make lint test`).
 3.  Submit your PR with a clear summary of changes and use cases.
+
+### Running Tooling
+Run `make verify` and `make export-test` natively.
