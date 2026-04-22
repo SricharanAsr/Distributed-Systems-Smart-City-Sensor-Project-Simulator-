@@ -72,3 +72,9 @@ class HumidityData(BaseSensorData):
     dew_point: float = Field(..., ge=-20.0, le=50.0)
 
 
+class PressureData(BaseSensorData):
+    type: Literal["pressure"] = "pressure"
+    atmospheric_pressure: float = Field(..., ge=800.0, le=1100.0)
+    altitude_equivalent: float = Field(..., ge=0.0)
+
+
