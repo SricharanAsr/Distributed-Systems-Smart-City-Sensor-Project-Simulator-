@@ -209,6 +209,8 @@ class SimulatorManager:
 
 
 
+import signal
+
 def main():
     parser = argparse.ArgumentParser(description="Smart City Sensor Simulator")
     parser.add_argument(
@@ -225,7 +227,6 @@ def main():
     config = load_config(args.config)
     config["dry_run"] = args.dry_run
 
-
     # Use JSON logging if configured or via env var
     use_json = config.get("json_logging", os.getenv("JSON_LOGGING", "false").lower() == "true")
     setup_logging(json_format=use_json)
@@ -236,10 +237,19 @@ def main():
         run_healthcheck(manager)
         return
 
+    # Signal handling for graceful shutdown
+    def signal_handler(sig, frame):
+        logger.info(f"Received signal {sig}. Shutting down...")
+        manager.stop()
+        os._exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
     try:
         manager.start()
-    except KeyboardInterrupt:
-        logger.info("Interrupted by user. Shutting down...")
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
         manager.stop()
 
 
