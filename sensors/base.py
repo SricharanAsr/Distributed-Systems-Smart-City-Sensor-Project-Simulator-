@@ -1,3 +1,5 @@
+import json
+import os
 import requests
 import logging
 import time
@@ -27,6 +29,7 @@ class BaseSensor(ABC):
         self.sensor_ids: List[str] = config.get("sensor_ids", [])
         self.dry_run: bool = config.get("dry_run", False)
         self.max_retries: int = config.get("max_retries", 3)
+        self.cache_dir: str = config.get("cache_dir", "data_cache")
         
         # Statistics tracking
         self.total_sent: int = 0
@@ -52,6 +55,21 @@ class BaseSensor(ABC):
     def _execute_request_with_retry(self, data: Dict[str, Any]) -> requests.Response:
         """Sends POST request to backend with a configured timeout."""
         return self.session.post(self.backend_url, json=data, timeout=10)
+
+    def _cache_failed_data(self, data: Dict[str, Any]) -> None:
+        """Saves failed payload to local storage for offline auditing."""
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+        
+        filename = f"{self.__class__.__name__}_{int(time.time() * 1000)}.json"
+        filepath = os.path.join(self.cache_dir, filename)
+        
+        try:
+            with open(filepath, "w") as f:
+                json.dump(data, f, indent=4)
+            logger.info(f"[{self.__class__.__name__}] Cached failed payload to {filepath}")
+        except Exception as e:
+            logger.error(f"[{self.__class__.__name__}] Failed to cache data locally: {e}")
 
     def send_data(self) -> None:
         """Simulates reading sensor data and transmitting it to the backend."""
@@ -80,4 +98,5 @@ class BaseSensor(ABC):
                 else:
                     self.total_failed += 1
                     logger.error(f"[{self.__class__.__name__}] Failed to send data after {self.max_retries} attempts.")
+                    self._cache_failed_data(data)
 
