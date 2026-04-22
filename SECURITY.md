@@ -23,3 +23,6 @@ To report a vulnerability, please email the project maintainer with the followin
 We will acknowledge receipt of your report within 48 hours and provide a timeline for resolution. Once a fix is verified, we will coordinate a public disclosure.
 
 Thank you for helping keep this project secure!
+
+## Submitting a Verification Report
+Please use the provided `tools/verify_sensors.py` prior to creating an issue.
