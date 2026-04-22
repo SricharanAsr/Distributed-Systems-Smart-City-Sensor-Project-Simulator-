@@ -39,3 +39,6 @@ clean-cache:
 
 clean-all: clean clean-logs clean-cache
 	@echo "All build artifacts, logs, and caches cleared."
+
+verify:
+	python tools/verify_sensors.py
