@@ -42,3 +42,6 @@ clean-all: clean clean-logs clean-cache
 
 verify:
 	python tools/verify_sensors.py
+
+export-test:
+	python -c "from utils.data_exporter import *"
