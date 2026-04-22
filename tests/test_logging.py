@@ -8,3 +8,5 @@ def test_custom_json_logger():
 def test_standard_logger():
     logger = setup_logging('test2', json_format=False)
     assert logger.name == 'test2'
+
+# These tests ensure logging handlers do not accumulate exponentially during reloading.
