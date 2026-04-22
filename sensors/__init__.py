@@ -11,6 +11,7 @@ from .streetlight import StreetLightSensor
 from .humidity import HumiditySensor
 from .pressure import PressureSensor
 from .battery import BatterySensor
+from .pedestrian import PedestrianSensor
 
 
 """
@@ -31,6 +32,7 @@ __all__ = [
     "HumiditySensor",
     "PressureSensor",
     "BatterySensor",
+    "PedestrianSensor",
 ]
 
 

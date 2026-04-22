@@ -85,3 +85,9 @@ class BatteryData(BaseSensorData):
     is_charging: bool = False
 
 
+class PedestrianData(BaseSensorData):
+    type: Literal["pedestrian"] = "pedestrian"
+    count: int = Field(..., ge=0)
+    direction: Literal["Inbound", "Outbound", "Cross"] = "Inbound"
+
+
