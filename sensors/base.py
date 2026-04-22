@@ -1,3 +1,4 @@
+import random
 import json
 import os
 import requests
@@ -18,7 +19,7 @@ class BaseSensor(ABC):
     """
     Abstract base class for all smart city sensors.
     Provides logic for HTTP session management, data transmission with retry,
-    and basic simulation statistics.
+    and probabilistic failure injection.
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -30,6 +31,10 @@ class BaseSensor(ABC):
         self.dry_run: bool = config.get("dry_run", False)
         self.max_retries: int = config.get("max_retries", 3)
         self.cache_dir: str = config.get("cache_dir", "data_cache")
+        
+        # Reliability Parameters
+        self.failure_probability: float = config.get("failure_probability", 0.0)
+        self.jitter_multiplier: float = config.get("jitter_multiplier", 1.0)
         
         # Statistics tracking
         self.total_sent: int = 0
@@ -73,6 +78,12 @@ class BaseSensor(ABC):
 
     def send_data(self) -> None:
         """Simulates reading sensor data and transmitting it to the backend."""
+        # Random Failure Injection (Malfunction simulation)
+        if random.random() < self.failure_probability:
+            logger.warning(f"[{self.__class__.__name__}] Simulated internal hardware failure. Skipping packet.")
+            self.total_failed += 1
+            return
+
         data = self.generate_data()
         
         if self.dry_run:
@@ -92,8 +103,9 @@ class BaseSensor(ABC):
                     f"[{self.__class__.__name__}] Transmission attempt {attempt + 1}/{self.max_retries} failed: {e}"
                 )
                 if attempt < self.max_retries - 1:
-                    wait_time = 2 ** attempt
-                    logger.debug(f"Retrying in {wait_time} seconds...")
+                    # Apply jitter to backoff
+                    wait_time = (2 ** attempt) * random.uniform(0.5, 1.5) * self.jitter_multiplier
+                    logger.debug(f"Retrying in {wait_time:.2f} seconds...")
                     time.sleep(wait_time)
                 else:
                     self.total_failed += 1
