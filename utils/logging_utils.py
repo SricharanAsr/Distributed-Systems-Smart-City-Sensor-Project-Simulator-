@@ -1,5 +1,7 @@
 import logging
 import json
+import os
+from logging.handlers import RotatingFileHandler
 from typing import Optional
 
 class JsonFormatter(logging.Formatter):
@@ -21,26 +23,45 @@ class JsonFormatter(logging.Formatter):
             log_record["message"] = str(log_record.get("message", ""))
             return json.dumps(log_record)
 
-def setup_logging(name: str = "SmartCitySimulator", json_format: bool = False, level: int = logging.INFO) -> logging.Logger:
+def setup_logging(
+    name: str = "SmartCitySimulator", 
+    json_format: bool = False, 
+    level: int = logging.INFO,
+    log_file: Optional[str] = "simulator.log"
+) -> logging.Logger:
     """
-    Configures and returns a logger instance.
+    Configures and returns a logger instance with console and optional file rotation.
     """
     logger = logging.getLogger(name)
-    handler = logging.StreamHandler()
+    logger.handlers = []  # Clear existing handlers
     
-    if json_format:
-        handler.setFormatter(JsonFormatter())
-    else:
-        handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    # Console Handler
+    console_handler = logging.StreamHandler()
+    
+    # File Handler (with rotation)
+    file_handler = None
+    if log_file:
+        log_dir = os.path.dirname(log_file)
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+        file_handler = RotatingFileHandler(
+            log_file, maxBytes=10*1024*1024, backupCount=5
         )
 
-    # Clean existing handlers to avoid duplicates
-    logger.handlers = []
-    logger.addHandler(handler)
-    logger.setLevel(level)
+    # Formatters
+    if json_format:
+        formatter = JsonFormatter()
+    else:
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     
-    # Prevent propagation to root logger
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    
+    if file_handler:
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+    logger.setLevel(level)
     logger.propagate = False
     
     return logger
