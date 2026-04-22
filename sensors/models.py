@@ -78,3 +78,10 @@ class PressureData(BaseSensorData):
     altitude_equivalent: float = Field(..., ge=0.0)
 
 
+class BatteryData(BaseSensorData):
+    type: Literal["battery"] = "battery"
+    level: int = Field(..., ge=0, le=100)
+    voltage: float = Field(..., ge=0.0, le=5.0)
+    is_charging: bool = False
+
+
