@@ -1,0 +1,2 @@
+class SmartCityException(Exception):
+    pass
