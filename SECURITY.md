@@ -26,3 +26,5 @@ Thank you for helping keep this project secure!
 
 ## Submitting a Verification Report
 Please use the provided `tools/verify_sensors.py` prior to creating an issue.
+
+Versions targeting 3.9.x are currently actively managed natively.
