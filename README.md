@@ -1,161 +1,104 @@
-# Smart City Sensor Project Simulator
+# 🏙️ Smart City Sensor Project Simulator
 
-A distributed system simulator for smart city sensor data. This project simulates various types of sensors (Environment, Traffic, Waste) and sends their data to a centralized backend for processing and analysis.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-green)](https://github.com/SricharanAsr/Distributed-Systems-Smart-City-Sensor-Project-Simulator-/actions)
 
-## Architecture
+A high-fidelity, distributed system simulator for smart city sensor data. This project simulates diverse sensor types and orchestrates concurrent data transmission to a centralized Hbase/Backend system.
 
-```mermaid.
+## 🏛️ Architecture
+
+```mermaid
 graph TD
-    subgraph "Smart City Simulator"
+    subgraph "Smart City Simulator (Local/Container)"
         Config[config.json / config.yaml / .env] --> Sim[SimulatorManager]
         Sim --> ES[EnvironmentSensor]
         Sim --> TS[TrafficSensor]
         Sim --> WS[WasteSensor]
-        Sim --> NS[NoiseSensor]
-        Sim --> EnS[EnergySensor]
-        Sim --> WQS[WaterQualitySensor]
-        Sim --> AQS[AirQualitySensor]
+        Sim --> HS[HumiditySensor]
+        Sim --> PS[PressureSensor]
+        Sim --> Others[...]
     end
 
-    subgraph "Backend System"
-        API[Inbound API /insert] --> DB[(Sensor Database)]
-        DB --> Dashboard[Analytics Dashboard]
+    subgraph "Distributed Backend"
+        API[Inbound API /insert] --> DB[(distributed-db)]
+        DB --> Dashboard[Analytics Engine]
     end
 
-    ES -- HTTP POST --> API
-    TS -- HTTP POST --> API
-    WS -- HTTP POST --> API
-    AQS -- HTTP POST --> API
+    ES -- HTTP/JSON --> API
+    TS -- HTTP/JSON --> API
+    WS -- HTTP/JSON --> API
+    HS -- HTTP/JSON --> API
+    PS -- HTTP/JSON --> API
 ```
 
-## Project Explanation
+## 🚀 Overview
 
-The **Smart City Sensor Project Simulator** is a robust, distributed-system-inspired tool designed to simulate real-world urban data generation. It bridges the gap between theoretical city planning and practical data engineering by providing a modular framework for generating high-fidelity sensor telemetry (Environment, Traffic, Waste, Noise, Energy, Water, and Air Quality) and transmitting it to a centralized backend for real-time analytics.
+The **Smart City Sensor Project Simulator** is designed to emulate the complex telemetry patterns of a modern urban environment. It provides a robust, scalable framework for generating high-velocity data points across multiple domains, from traffic flow to atmospheric conditions.
 
-## Tech Stack
+### 🛠️ Tech Stack
 
-- **Core**: Python 3.10+
-- **Data Modeling & Validation**: [Pydantic v2](https://docs.pydantic.dev/) for strict type checking and data integrity.
-- **Communication**: [Requests](https://requests.readthedocs.io/) for high-concurrency HTTP data transmission.
-- **Configuration**: Support for `.env`, `config.json`, and **YAML** (`PyYAML`).
-- **Concurrency**: Multi-threaded orchestration via Python's `threading` module.
-- **Testing**: [pytest](https://docs.pytest.org/) and `unittest` for component-level verification.
-- **Code Quality**: [Black](https://black.readthedocs.io/) for standardized formatting.
-- **DevOps**: [Docker](https://www.docker.com/), [Makefile](https://www.gnu.org/software/make/manual/make.html), and **GitHub Actions CI/CD**.
+*   **Runtime**: Python 3.10+
+*   **Validation**: [Pydantic v2](https://docs.pydantic.dev/) for strict schema enforcement.
+*   **Net**: [Requests](https://requests.readthedocs.io/) with persistent session pooling.
+*   **Config**: Hierarchical loading (Env -> YAML -> JSON -> CLI).
+*   **Concurrency**: Multi-threaded `ThreadPoolExecutor` for parallel sensor tasking.
+*   **Ops**: Docker-ready with `Makefile` automation.
 
-## Working Principles
+## 🧬 Core Features
 
-1.  **Threaded Orchestration**: The `SimulatorManager` initializes a dedicated thread for each sensor type, ensuring independent operation and preventing blocking.
-2.  **Model-Driven Generation**: Each sensor uses a dedicated Pydantic model to generate randomized yet valid telemetry data (e.g., pH stays within 0-14, humidity 0-100%).
-3.  **Desynchronization (Interval Jitter)**: To prevent synchronized "thundering herd" API calls, a randomization algorithm adds jitter to the simulation intervals, creating a more realistic network load.
-4.  **Graceful Orchestration**: A `CancellationToken` mechanism allows for clean, non-blocking shutdowns, ensuring no data loss during simulation termination.
-5.  **Environment Parity**: Configuration is loaded from multiple sources (env, file, CLI) with a clear precedence order, suitable for local development or containerized deployment.
+*   **Dynamic Orchestration**: Each sensor operates on its own lifecycle managed by a central supervisor.
+*   **Intelligent Jitter**: Implements randomized interval padding to simulate real-world transmission desynchronization.
+*   **Graceful Termination**: Robust signal handling (`SIGINT`/`SIGTERM`) ensures clean exits and data integrity via the `CancellationToken` pattern.
+*   **Local Resilience**: Built-in **Offline Persistence (Caching)** saves failed payloads locally when connectivity is lost.
+*   **Observability**: Integrated **Rotating File Logging** and Optional JSON formatting for log aggregators.
 
-## Features
+## 📡 Sensor Catalog
 
-- **Modular Design**: Class-based sensor implementation allows for easy expansion.
-- **Flexible Configuration**: Supports JSON, **YAML**, environment variables, and CLI args.
-- **Robustness**: Pydantic data validation and graceful shutdown via `CancellationToken`.
-- **Realistic Simulation**: Implements **Randomized Interval Jitter** to desynchronize sensors.
-- **Observability**: Supports **Structured JSON Logging** for better monitoring.
-- **Operational Ready**: Built-in **Health Check** command (`--health`).
-- **Multiple Sensor Types**:
-    - **Environment**: Temperature, Humidity, AQI, CO2.
-    - **Traffic**: Vehicle count, Average Speed.
-    - **Waste**: Fill levels with Stateful Fill Tracking methodologies.
-    - **Noise**: Acoustic decibel levels (Time-of-Day Aware).
-    - **Energy**: City power consumption in kW (Peak-Hour Aware).
-    - **Water Quality**: pH, Turbidity, Dissolved Oxygen.
-    - **Air Quality**: PM2.5, PM10, NO2, O3.
+| Sensor Type | Key Metrics Simulated | Application |
+| :--- | :--- | :--- |
+| **Traffic** | Vehicle Count, Speed, Congestion | Urban Mobility |
+| **Air Quality** | PM2.5, PM10, CO2, NO2 | Environmental Health |
+| **Waste** | Fill Level, Weight, Stateful Tracking | Logistics |
+| **Humidity** | Relative Humidity, Dew Point | Micro-climate Monitoring |
+| **Pressure** | Atmospheric Pressure, Equivalent Altitude | Meteorology |
+| **Environment** | Temperature, Multi-factor analysis | General Weather |
+| **Water Quality**| pH, Turbidity, Dissolved Oxygen | Utility Management |
+| **Parking** | Occupancy, Turnover | Smart Infrastructure |
 
-## Technical Specifications
+## 🛠️ Getting Started
 
-### Data Schema
+### Prerequisites
+* Python 3.10 or higher
+* Docker (optional)
 
-All sensors send data in JSON format with common and type-specific fields.
-.
-#### Common Fields (BaseSensor)
-| Field | Type | Description |
-| :--- | :--- | :--- |.
-| `sensorId` | `string` | Unique identifier for the sensor (e.g., S101) |
-| `city` | `string` | City name (e.g., Mumbai) |
-| `zone` | `string` | Specific area (e.g., Powai) |
-| `timestamp` | `ISO8601` | Time of reading (e.g., 2024-03-08T10:00:00Z) |.
-| `type` | `string` | Sensor type (environment, traffic, waste) |
+### Quick Start
+1.  **Clone and Install**:
+    ```bash
+    git clone https://github.com/SricharanAsr/Distributed-Systems-Smart-City-Sensor-Project-Simulator-.git
+    cd Distributed-Systems-Smart-City-Sensor-Project-Simulator-
+    pip install -r requirements.txt
+    ```
 
-#### Type-Specific Fields
-- **Environment**: `temperature`, `humidity`, `aqi`, `co2`
-- **Traffic**: `vehicle_count`, `average_speed`
-- **Waste**: `fill_level`, `last_collected`
-- **Noise**: `decibels`
-- **Energy**: `consumption_kw`
-- **Water Quality**: `ph`, `turbidity`, `dissolved_oxygen`
-- **Air Quality**: `pm25`, `pm10`, `no2`, `o3`
+2.  **Run with Defaults (Dry-Run)**:
+    ```bash
+    python simulator.py --dry-run
+    ```
 
-### API Specification
+3.  **Production Run**:
+    ```bash
+    python simulator.py --config config.yaml
+    ```
 
-The simulator interacts with a backend REST API.
+### Using Makefile
+*   `make run`: Start simulation.
+*   `make health`: Perform connectivity and config check.
+*   `make docker-build`: Containerize the application.
 
-- **Endpoint**: `POST /insert`
-- **Content-Type**: `application/json`
-- **Payload**: Full sensor JSON object as described above.
+## 📊 Technical Data Model
 
-**Example Payload (Environment Sensor):**
-```json
-{
-  "sensorId": "S101",
-  "city": "Mumbai",
-  "zone": "Andheri",
-  "timestamp": "2024-03-08T10:00:00Z",
-  "type": "environment",
-  "temperature": 28.5,
-  "humidity": 65.2,
-  "aqi": 120,
-  "co2": 450
-}
-```
+Comprehensive schema documentation is available in [DOCS/DATA_MODEL.md](DOCS/DATA_MODEL.md).
 
-**Expected Response (Success):**
-```json
-{
-  "status": "success",
-  "message": "Data received successfully",
-  "data_id": "8f3a5b29-1a40-4c72-9b0d-fa0e8d1a1b42"
-}
-```
-
-
-## Getting Started
-
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Configure**:
-   Update `config.json` (or `config.yaml`) or copy `.env.example` to `.env` and set your backend URL and sensor details.
-
-3. **Run Simulator**:
-   ```bash
-   # using python with JSON config
-   python simulator.py --config config.json
-   
-   # using python with YAML config
-   python simulator.py --config config.yaml
-   
-   # Run health check
-   python simulator.py --health
-   ```
-   
-4. **Deploy with Docker**:
-   ```bash
-   make docker-build
-   docker run smart-city-simulator
-   ```
-
-## Repository Statistics
-- **Last Updated**: 2026-03-18
-- **Language**: Python 3.x
-- **Commits Today**: 13 Professional Industry-Level Commits
-
-<!-- Parameter injection docs -->
+## 📄 License
+This project is licensed under the [MIT License](LICENSE).
