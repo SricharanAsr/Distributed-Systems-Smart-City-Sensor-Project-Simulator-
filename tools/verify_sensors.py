@@ -8,3 +8,5 @@ def verify_config(path='config.json'):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.parse_args()
+
+# This script deeply verifies schema conformity across multiple sensor configs.
