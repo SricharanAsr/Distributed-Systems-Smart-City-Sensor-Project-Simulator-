@@ -232,7 +232,7 @@ def main():
 
     # Use JSON logging if configured or via env var
     use_json = config.get("json_logging", os.getenv("JSON_LOGGING", "false").lower() == "true")
-    setup_logging(json_format=use_json)
+    setup_logging(json_format=use_json, level=config.get("log_level", "INFO"))
 
     manager = SimulatorManager(config)
 
