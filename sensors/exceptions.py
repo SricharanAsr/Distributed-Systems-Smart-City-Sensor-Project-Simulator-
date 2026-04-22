@@ -3,3 +3,6 @@ class SmartCityException(Exception):
 
 class SensorNotConfiguredError(SmartCityException):
     pass
+
+class SensorDataInvalidError(SmartCityException):
+    pass
