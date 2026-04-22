@@ -6,3 +6,5 @@ class SensorNotConfiguredError(SmartCityException):
 
 class SensorDataInvalidError(SmartCityException):
     pass
+
+# Utilizing domain specific exceptions optimizes upper level Simulator rescue operations.
