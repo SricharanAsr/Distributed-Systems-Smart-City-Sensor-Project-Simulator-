@@ -102,3 +102,6 @@ Comprehensive schema documentation is available in [DOCS/DATA_MODEL.md](DOCS/DAT
 
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE).
+
+### Tools & Utilities
+Use the `data_exporter` utility natively when decoupling the database layer.
