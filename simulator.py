@@ -1,6 +1,7 @@
 import argparse
 import time
 import json
+from sensors.exceptions import SmartCityException
 import logging
 import os
 import yaml
