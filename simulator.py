@@ -33,18 +33,36 @@ load_dotenv()
 
 
 class CancellationToken:
+    """A light-weight token used to signal cancellation across threads.
+
+    Attributes:
+        _is_cancelled (bool): Internal state representing if cancellation was requested.
+    """
     def __init__(self) -> None:
         self._is_cancelled: bool = False
 
     def cancel(self) -> None:
+        """Triggers the cancellation signal."""
         self._is_cancelled = True
 
     def is_cancelled(self) -> bool:
+        """Checks if cancellation has been requested.
+
+        Returns:
+            bool: True if cancelled, False otherwise.
+        """
         return self._is_cancelled
 
 
-
 def load_config(config_path: str = "config.json") -> Dict[str, Any]:
+    """Loads configuration from a file and overrides with environment variables.
+
+    Args:
+        config_path: Path to the configuration file (JSON or YAML).
+
+    Returns:
+        Dict[str, Any]: A dictionary containing normalized configuration parameters.
+    """
     # Load defaults from config file
     config_data = {}
     if os.path.exists(config_path):
@@ -91,7 +109,14 @@ def load_config(config_path: str = "config.json") -> Dict[str, Any]:
 
 
 def validate_config(config: Dict[str, Any]) -> None:
-    """Validates the configuration dictionary."""
+    """Validates the configuration dictionary for required keys and types.
+
+    Args:
+        config: The configuration dictionary to validate.
+
+    Raises:
+        ValueError: If a required key is missing or a value is invalid.
+    """
     required_keys = ["backend_url", "city", "zones", "sensor_ids", "interval"]
     for key in required_keys:
         if key not in config:
@@ -108,8 +133,16 @@ def validate_config(config: Dict[str, Any]) -> None:
 
 
 class SimulatorManager:
-    """
-    Manages the initialization and continuous data transmission of smart city sensors.
+    """Manages the lifecycle and orchestration of city sensor simulations.
+
+    Initializes sensor objects based on available classes in the sensors module
+    and manages their execution using a thread pool.
+
+    Attributes:
+        config (Dict[str, Any]): The simulation configuration.
+        interval (int): Seconds between data transmissions.
+        sensors (List[BaseSensor]): List of initialized sensor instances.
+        cancel_token (CancellationToken): Token for synchronizing shutdown.
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -120,17 +153,17 @@ class SimulatorManager:
             if inspect.isclass(obj) and issubclass(obj, sensors.BaseSensor) and obj is not sensors.BaseSensor:
                 self.sensors.append(obj(config))
 
-
-
         self._running = False
         self.cancel_token = CancellationToken()
         self.executor = ThreadPoolExecutor(max_workers=len(self.sensors) + 1)
-        self.health_interval = 60  # Determines seconds elapsed between heartbeat logging.  # Log stats every 60 seconds
-
-
+        self.health_interval = 60
 
     def _run_sensor(self, sensor: Any) -> None:
-        """Continuously runs a single sensor with randomized jitter."""
+        """Continuously runs a single sensor simulation loop.
+
+        Args:
+            sensor: The sensor instance to run.
+        """
         # Initial random delay to desynchronize sensors
         initial_delay = random.uniform(0, self.interval)
         for _ in range(int(initial_delay)):
@@ -155,7 +188,7 @@ class SimulatorManager:
                 time.sleep(remaining)
 
     def _log_health(self) -> None:
-        """Periodically logs health and statistics of the simulation."""
+        """Periodically calculates and logs overall simulation health statistics."""
         for _ in range(self.health_interval):
             if self.cancel_token.is_cancelled():
                 return
@@ -179,9 +212,8 @@ class SimulatorManager:
                     break
                 time.sleep(1)
 
-
     def start(self) -> None:
-        """Starts the main simulation loop with ThreadPoolExecutor."""
+        """Initiates the simulation by launching sensor threads."""
         self._running = True
         logger.info(f"Smart City Simulator Started with {len(self.sensors)} sensors...")
 
@@ -198,9 +230,8 @@ class SimulatorManager:
             except KeyboardInterrupt:
                 break
 
-
     def stop(self) -> None:
-        """Stops the simulation loop and shuts down the executor."""
+        """Shuts down all threads and releases resources."""
         logger.info("Stopping Smart City Simulator...")
         self.cancel_token.cancel()
         self._running = False
@@ -208,10 +239,8 @@ class SimulatorManager:
         logger.info("Simulator gracefully stopped.")
 
 
-
-import signal
-
 def main():
+    """Main entry point for the Smart City Sensor Simulator CLI."""
     parser = argparse.ArgumentParser(description="Smart City Sensor Simulator")
     parser.add_argument(
         "--config", type=str, default="config.json", help="Path to configuration file"
@@ -253,12 +282,12 @@ def main():
         manager.stop()
 
 
-if __name__ == "__main__":
-    main()
-
-
 def run_healthcheck(manager: SimulatorManager) -> None:
-    """Performs a health check on the simulator components."""
+    """Performs a diagnostic check on simulator connectivity and configuration.
+
+    Args:
+        manager: The SimulatorManager instance to check.
+    """
     logger.info("Starting Simulator Health Check...")
     errors = []
 
