@@ -72,3 +72,6 @@ version 2.0, available at
 https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
 
 [homepage]: https://www.contributor-covenant.org
+
+### Clarification and Maintenance
+Maintainers will rigidly adhere to all formatting requirements detailed.
