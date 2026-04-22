@@ -13,16 +13,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 
+import random
+import signal
+from utils.config_models import AppConfig
 from utils.logging_utils import setup_logging
 from sensors.constants import (
     DEFAULT_BACKEND_URL,
-    DEFAULT_CITY,
-    DEFAULT_ZONES,
-    DEFAULT_SENSOR_IDS,
-    DEFAULT_INTERVAL,
     JITTER_PERCENTAGE,
     MIN_SLEEP_TIME,
-    GRACEFUL_SHUTDOWN_TIMEOUT,
 )
 
 # Initial logger setup
@@ -53,83 +51,58 @@ class CancellationToken:
         """
         return self._is_cancelled
 
-
-def load_config(config_path: str = "config.json") -> Dict[str, Any]:
+def load_config(config_path: str = "config.json") -> AppConfig:
     """Loads configuration from a file and overrides with environment variables.
 
     Args:
         config_path: Path to the configuration file (JSON or YAML).
 
     Returns:
-        Dict[str, Any]: A dictionary containing normalized configuration parameters.
+        AppConfig: A validated configuration model.
     """
     # Load defaults from config file
-    config_data = {}
+    raw_data = {}
     if os.path.exists(config_path):
         try:
             with open(config_path, "r") as f:
                 if config_path.endswith((".yaml", ".yml")):
-                    config_data = yaml.safe_load(f) or {}
+                    raw_data = yaml.safe_load(f) or {}
                 else:
-                    config_data = json.load(f)
+                    raw_data = json.load(f)
         except (json.JSONDecodeError, yaml.YAMLError) as e:
             logger.error(f"Error parsing {config_path}: {e}")
     else:
         logger.warning(
             f"Config file '{config_path}' not found, relying on environment variables or defaults."
         )
+
     # Override with environment variables
     env_mappings = {
         "BACKEND_URL": "backend_url",
         "CITY": "city",
         "SIMULATION_INTERVAL": "interval",
+        "DRY_RUN": "dry_run",
     }
     for env_key, config_key in env_mappings.items():
         val = os.getenv(env_key)
         if val:
             if config_key == "interval":
                 try:
-                    config_data[config_key] = int(val)
+                    raw_data[config_key] = int(val)
                 except ValueError:
                     logger.error(f"{env_key} must be an integer.")
+            elif config_key == "dry_run":
+                raw_data[config_key] = val.lower() == "true"
             else:
-                config_data[config_key] = val
+                raw_data[config_key] = val
 
-    # Apply fallbacks
-    config_data.setdefault("backend_url", DEFAULT_BACKEND_URL)
-    config_data.setdefault("city", DEFAULT_CITY)
-    config_data.setdefault("zones", DEFAULT_ZONES)
-    config_data.setdefault("sensor_ids", DEFAULT_SENSOR_IDS)
-    config_data.setdefault("interval", DEFAULT_INTERVAL)
-
-    # Validation
-    validate_config(config_data)
-
-    return config_data
-
-
-def validate_config(config: Dict[str, Any]) -> None:
-    """Validates the configuration dictionary for required keys and types.
-
-    Args:
-        config: The configuration dictionary to validate.
-
-    Raises:
-        ValueError: If a required key is missing or a value is invalid.
-    """
-    required_keys = ["backend_url", "city", "zones", "sensor_ids", "interval"]
-    for key in required_keys:
-        if key not in config:
-            raise ValueError(f"Missing required configuration key: {key}")
-
-    if not isinstance(config["interval"], int) or config["interval"] <= 0:
-        raise ValueError("Simulation interval must be a positive integer.")
-
-    if not config["zones"] or not isinstance(config["zones"], list):
-        raise ValueError("Zones must be a non-empty list.")
-
-    if not config["sensor_ids"] or not isinstance(config["sensor_ids"], list):
-        raise ValueError("Sensor IDs must be a non-empty list.")
+    # Validate and return using Pydantic
+    try:
+        return AppConfig.model_validate(raw_data)
+    except Exception as e:
+        logger.error(f"Configuration validation failed: {e}")
+        # Fallback to defaults if validation fails completely, or raise
+        return AppConfig(backend_url=DEFAULT_BACKEND_URL)
 
 
 class SimulatorManager:
@@ -139,19 +112,20 @@ class SimulatorManager:
     and manages their execution using a thread pool.
 
     Attributes:
-        config (Dict[str, Any]): The simulation configuration.
+        config (AppConfig): The validated simulation configuration.
         interval (int): Seconds between data transmissions.
         sensors (List[BaseSensor]): List of initialized sensor instances.
         cancel_token (CancellationToken): Token for synchronizing shutdown.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: AppConfig) -> None:
         self.config = config
-        self.interval = config.get("interval", 5)
+        self.interval = config.interval
         self.sensors = []
         for name, obj in inspect.getmembers(sensors):
             if inspect.isclass(obj) and issubclass(obj, sensors.BaseSensor) and obj is not sensors.BaseSensor:
-                self.sensors.append(obj(config))
+                # BaseSensor expects Dict[str, Any], so we pass model_dump()
+                self.sensors.append(obj(config.model_dump()))
 
         self._running = False
         self.cancel_token = CancellationToken()
