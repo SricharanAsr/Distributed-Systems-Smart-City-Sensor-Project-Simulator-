@@ -1,39 +1,70 @@
+# Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Environment variables and virtualenvs
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-.vscode/
-.idea/
 
-# Testing caches
+# IDEs and Editors
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Testing and Coverage
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 .nox/
 .tox/
+.hypothesis/
 
-# Build artifacts
+# Static Analysis
+.mypy_cache/
+.ruff_cache/
+.pyre/
+
+# Build and Distribution
 dist/
 build/
 *.egg-info/
 
-# Research tool caches
+# Research and Documentation
 .ipynb_checkpoints
 .python-version
+site/
 
-# OS files
+# OS specific files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Database files
+# Database and logs
 *.sqlite3
 *.db
-.coverage.*
+*.log
+simulator.log*
 
-# App cache entries
+# App specific
+sam.txt
+data_export/
+
+*.csv
