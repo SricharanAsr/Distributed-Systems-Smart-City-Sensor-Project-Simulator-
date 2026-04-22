@@ -8,7 +8,7 @@ from .water_quality import WaterQualitySensor
 from .air_quality import AirQualitySensor
 from .parking import ParkingSensor
 from .streetlight import StreetLightSensor
-
+from .humidity import HumiditySensor
 
 
 """
@@ -26,6 +26,7 @@ __all__ = [
     "AirQualitySensor",
     "ParkingSensor",
     "StreetLightSensor",
+    "HumiditySensor",
 ]
 
 
